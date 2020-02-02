@@ -1,0 +1,12 @@
+<launch>
+  <node pkg="ins_ros" type="ins_node" name="INS" output="screen">
+   <param name="serial_port" type="string" value="/dev/ttyUSB0" />
+   <param name="serial_baud" type="int" value="115200" />
+   <!-- setting the output type and frequency -->
+   <!-- TODO:- set the command line input -->
+   <param name="output_type" type="int" value="0"/>
+   <param name="output_rate" type="int" value="100" />
+   <!--setting the publishing rate-->
+   <param name="publish_rate" type="int" value="50"/>
+  </node>
+</launch>
