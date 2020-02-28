@@ -4,28 +4,32 @@
 #include<stdlib.h>
 
 //Inertial Labs source header
-#include "InertialLabs_IMU.h"
+#include "InertialLabs_AHRS_10.h"
+
 #include <ros/ros.h>
-#include <inertiallabs_msgs/imu_data.h>
+
+//adding message type headers
+#include <inertiallabs_msgs/ahrs_data.h>
 
 
 //Publishers
-ros::Publisher pubimu_data;
+ros::Publisher pubahrs_data;
 
 
 //global variables
-IL_IMU imu;
-int imu_output_format;
-std::string imu_frame_id;
+IL_AHRS_10 ahrs;
+int ahrs_output_format;
+std::string ahrs_frame_id;
 ros::Timer pub_timer;
-IL_ERROR_CODE il_err;         
+IL_ERROR_CODE il_err;
+IL_ERROR_CODE il_error;         
 std::string il_error_msg;
 
 
-IMUCompositeData imu_data;
+AHRS_10_CompositeData ahrs_data;
 
 
-inertiallabs_msgs::imu_data  msg_imu_data;
+inertiallabs_msgs::ahrs_data  msg_ahrs_data;
 
 void ilerror_msg(IL_ERROR_CODE il_error,std::string &msg);
 
@@ -37,47 +41,47 @@ void publish_device()
 
 	ros::Time timestamp=ros::Time::now();
 
-	if(pubimu_data.getNumSubscribers()>0)
+	if(pubahrs_data.getNumSubscribers()>0)
 	{
 		ROS_INFO("subscribed");
 		
-		il_err = IMU_YPR(&imu,&imu_data);
+		il_err = AHRS_10_YPR(&ahrs,&ahrs_data);
 		if(il_err!=ILERR_NO_ERROR)
 		{
 			ilerror_msg(il_err,il_error_msg);
 			ROS_FATAL( "%s" ,il_error_msg.c_str());exit(EXIT_FAILURE);
 		}
-		il_err = IMU_getGyroAccMag(&imu,&imu_data);
+		il_err = AHRS_10_getGyroAccMag(&ahrs,&ahrs_data);
 		if(il_err!=ILERR_NO_ERROR)
 		{
 			ilerror_msg(il_err,il_error_msg);
 			ROS_FATAL("%s" ,il_error_msg.c_str()); exit(EXIT_FAILURE);
 		}
-		il_err = IMU_getSensorData(&imu,&imu_data);
+		il_err = AHRS_10_getSensorData(&ahrs,&ahrs_data);
 		if(il_err!=ILERR_NO_ERROR)
 		{
 			ilerror_msg(il_err,il_error_msg);
 			ROS_FATAL( "%s" , il_error_msg.c_str());exit(EXIT_FAILURE);
 		}
 	
-			msg_imu_data.header.seq=seq;
-			msg_imu_data.header.stamp=timestamp;
-			msg_imu_data.header.frame_id=imu_frame_id;
-			msg_imu_data.YPR.x=imu_data.ypr.yaw;
-			msg_imu_data.YPR.y=imu_data.ypr.pitch;
-			msg_imu_data.YPR.z=imu_data.ypr.roll;
-			msg_imu_data.Mag.x=imu_data.magnetic.c0;
-			msg_imu_data.Mag.y=imu_data.magnetic.c1;
-			msg_imu_data.Mag.z=imu_data.magnetic.c2;
-			msg_imu_data.Accel.x=imu_data.acceleration.c0;
-			msg_imu_data.Accel.y=imu_data.acceleration.c1;
-			msg_imu_data.Accel.z=imu_data.acceleration.c2;
-			msg_imu_data.Gyro.x=imu_data.gyro.c0;
-			msg_imu_data.Gyro.y=imu_data.gyro.c1;
-			msg_imu_data.Gyro.z=imu_data.gyro.c2;
-			msg_imu_data.Temp=imu_data.Temper;
-			msg_imu_data.Vinp=imu_data.Vinp;
-			pubimu_data.publish(msg_imu_data);
+			msg_ahrs_data.header.seq=seq;
+			msg_ahrs_data.header.stamp=timestamp;
+			msg_ahrs_data.header.frame_id=ahrs_frame_id;
+			msg_ahrs_data.YPR.x=ahrs_data.ypr.yaw;
+			msg_ahrs_data.YPR.y=ahrs_data.ypr.pitch;
+			msg_ahrs_data.YPR.z=ahrs_data.ypr.roll;
+			msg_ahrs_data.Mag.x=ahrs_data.magnetic.c0;
+			msg_ahrs_data.Mag.y=ahrs_data.magnetic.c1;
+			msg_ahrs_data.Mag.z=ahrs_data.magnetic.c2;
+			msg_ahrs_data.Accel.x=ahrs_data.acceleration.c0;
+			msg_ahrs_data.Accel.y=ahrs_data.acceleration.c1;
+			msg_ahrs_data.Accel.z=ahrs_data.acceleration.c2;
+			msg_ahrs_data.Gyro.x=ahrs_data.gyro.c0;
+			msg_ahrs_data.Gyro.y=ahrs_data.gyro.c1;
+			msg_ahrs_data.Gyro.z=ahrs_data.gyro.c2;
+			msg_ahrs_data.Temp=ahrs_data.Temper;
+			msg_ahrs_data.Vinp=ahrs_data.Vinp;
+			pubahrs_data.publish(msg_ahrs_data);
 	
 	}
 
@@ -124,13 +128,13 @@ void ilerror_msg(IL_ERROR_CODE il_error,std::string &msg)
 
 int main(int argc,char** argv)
 {
-	ros::init(argc,argv,"continues_inertiallabs_imu");
+	ros::init(argc,argv,"continues_inertiallabs_ahrs_10");
 	ros::NodeHandle n;
 	ros::NodeHandle np("~");
 	ros::Rate r(100); // 100 hz
 	std::string port;
 
-	IMUSetInternalData data;
+	AHRS_10_SetInternalData data;
 
 	//commadn line varibales
 
@@ -140,7 +144,7 @@ int main(int argc,char** argv)
 	np.param<int>("publish_rate",publish_rate,10);
 	np.param<int>("async_output_type",async_output_type,0);
 	np.param<int>("async_output_rate",async_output_rate,6);
-	np.param<int>("imu_output_format",imu_output_format,1);
+	np.param<int>("ahrs_output_format",ahrs_output_format,1);
 
 	//Initializing Publishers
 
@@ -149,7 +153,7 @@ int main(int argc,char** argv)
 
 	ROS_INFO("connecting to INS. port: %s at a baudrate:%d\n",port.c_str(),baudrate);
 
-	il_err=IMU_connect(&imu,port.c_str(),baudrate);
+	il_err=AHRS_10_connect(&ahrs,port.c_str(),baudrate);
 	std:: cout << "after INS_connect \n";
 	if(il_err!=ILERR_NO_ERROR) 
 	{
@@ -162,7 +166,7 @@ int main(int argc,char** argv)
 	}
 
 
-	il_err= IMU_Stop(&imu);
+	il_err= AHRS_10_Stop(&ahrs);
 	ros::Duration(5).sleep();
 	if(il_err!=ILERR_NO_ERROR)
 	{
@@ -170,7 +174,7 @@ int main(int argc,char** argv)
 		ROS_FATAL("stop command error");exit(EXIT_FAILURE);
 	}
 
-	il_err= ReadIMUpar(&imu);
+	il_err= ReadAHRS10par(&ahrs);
 	ros::Duration(2).sleep();
 	if(il_err!=ILERR_NO_ERROR)
 	{
@@ -178,13 +182,13 @@ int main(int argc,char** argv)
 		ROS_FATAL("read command error"); exit(EXIT_FAILURE);
 	}
 
-	IMU_ReadInternalParameters(&imu,&data);
+	AHRS_10_ReadInternalParameters(&ahrs,&data);
 
 
 	/*
 	 * \brief Set the data output mode of the INS.
 	 */
-	il_err= IMU_SetMode(&imu,IL_SET_CONTINUES_MODE); 
+	il_err= AHRS_10_SetMode(&ahrs,IL_AHRS_10_ONREQUEST_CMD); 
 
 	if(il_err!=ILERR_NO_ERROR)
 	{
@@ -196,30 +200,30 @@ int main(int argc,char** argv)
 	 */
 	ros::Duration(2).sleep();
 
-	imu.cmd_flag = imu_output_format;
-	switch (imu_output_format)
+	ahrs.cmd_flag = ahrs_output_format;
+	switch (ahrs_output_format)
 	{
-		case IL_IMU_CLB_DATA_RECEIVE:
-			il_err = IMU_ClbData_Receive(&imu);
+		case IL_AHRS_10_CLB_DATA_RECEIVE:
+			il_error = AHRS_10_ClbData_Receive(&ahrs);
 			break;
 
-		case IL_IMU_GA_DATA_RECEIVE:
-			il_err = IMU_GAdata_Receive(&imu);
+		case IL_AHRS_10_CLB_HR_DATA_RECEIVE:
+			il_error = AHRS_10_ClbHRData_Receive(&ahrs);
 			break;
 
-		case IL_IMU_ORIENTATION_RECEIVE:
-			il_err = IMU_Orientation_Receive(&imu);
+		case IL_AHRS_10_QUATERNION_RECEIVE:
+			il_error = AHRS_10_QuatData_Receive(&ahrs);
 			break;
 
-		case IL_IMU_PSTABILIZATION_RECEIVE:
-			il_err = IMU_PStabilization_Receive(&imu);
+		case IL_READ_AHRS_10_PAR_RECEIVE:
+			il_error = ReadAHRS10par(&ahrs);
 			break;
-		case IL_IMU_NMEA_RECEIVE:
-			il_err = IMU_NMEA_Receive(&imu) ;
+		case IL_AHRS_10_NMEA_RECEIVE:
+			il_error = AHRS_10_NMEA_Receive(&ahrs) ;
 			break;
 		
 		default:
-			ROS_INFO("this output data format is not supported by this IMU-P");
+			ROS_INFO("this output data format is not supported by this AHRS_10");
 			break;
 	}
 
@@ -236,6 +240,6 @@ int main(int argc,char** argv)
 	}
 
 	ros::spin();
-	IMU_disconnect(&imu);
+	AHRS_10_disconnect(&ahrs);
 	return 0;
 }

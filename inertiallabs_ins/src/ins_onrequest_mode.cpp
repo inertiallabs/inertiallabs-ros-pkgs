@@ -281,7 +281,7 @@ bool send_data(ins_node::YPR::Request &req,
 #endif 
 int main(int argc,char** argv)
 {
-	ros::init(argc,argv,"inertiallabs_msgs");
+	ros::init(argc,argv,"onrequest_inertiallabs_ins");
 	ros::NodeHandle n;
 	ros::NodeHandle np("~");
 	ros::Rate r(100); // 100 hz

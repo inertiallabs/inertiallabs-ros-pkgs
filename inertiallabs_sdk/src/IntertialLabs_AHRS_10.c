@@ -468,6 +468,10 @@ void* AHRS_10_communicationHandler(void* AHRS_10obj)
 
 		AHRS_10_readData_threadSafe(ahrs, readBuffer, READ_BUFFER_SIZE, &numOfBytesRead);
 
+// #if IL_AHRS_10_DBG
+// 		printf("numOfBytesRead %d : \n", numOfBytesRead);
+
+// #endif
 
 		if (numOfBytesRead == 0)
 		{
@@ -475,7 +479,17 @@ void* AHRS_10_communicationHandler(void* AHRS_10obj)
 			inertial_sleepInMs(NUMBER_OF_MILLISECONDS_TO_SLEEP_AFTER_NOT_RECEIVING_ON_COM_PORT);
 			continue;
 		}
-		else
+		else if (numOfBytesRead > 0 && numOfBytesRead < AHRS_10Int->num_bytes_recive)
+		{
+			printf("numOfBytesRead %d : \n", numOfBytesRead);
+#if IL_AHRS_10_DBG
+			printf("complete package not recived , so wrong value in the packet \n");
+
+#endif 	
+			memset(readBuffer, 0x00, sizeof(unsigned char) * READ_BUFFER_SIZE);
+			continue;		
+		}
+		else if(numOfBytesRead > 0 && numOfBytesRead == AHRS_10Int->num_bytes_recive)
 		{
 #if IL_AHRS_10_DBG
 			for (int i = 0; i < numOfBytesRead; i++)
@@ -837,7 +851,7 @@ IL_ERROR_CODE AHRS_10_YPR(IL_AHRS_10* ahrs, AHRS_10_CompositeData* data)
 	{
 		data->ypr.yaw = (double)(*(int32_t*)(&(AHRS_10Int->dataBuffer[i + 0]))) / 1000;
 		data->ypr.pitch = (double)(*(int32_t*)(&(AHRS_10Int->dataBuffer[i + 4]))) / 1000;
-		data->ypr.roll = (double)(*(int32_t*)(&(AHRS_10Int->dataBuffer[i + 8))) / 1000;
+		data->ypr.roll = (double)(*(int32_t*)(&(AHRS_10Int->dataBuffer[i + 8]))) / 1000;
 
 		errorCode = ILERR_NO_ERROR;
 		break;
@@ -1020,7 +1034,7 @@ IL_ERROR_CODE AHRS_10_SetMode(IL_AHRS_10* ahrs, int mode)
 	if (ahrs->mode)
 	{
 		ahrs->cmd_flag = IL_AHRS_10_ONREQUEST_CMD;
-		AHRS_10_setSetOnRequestMode(ahrs, syncDataOutputType, waitForResponse);
+		AHRS_10_SetOnRequestMode(ahrs, syncDataOutputType, waitForResponse);
 		return ILERR_NO_ERROR;
 	}
 	else
@@ -1054,7 +1068,7 @@ IL_ERROR_CODE AHRS_10_Stop(IL_AHRS_10* ahrs)
 	return errorCode;
 }
 
-IL_ERROR_CODE AHRS_10_setSetOnRequestMode(IL_AHRS_10* ahrs, unsigned int syncDataOutputType, IL_BOOL waitForResponse)
+IL_ERROR_CODE AHRS_10_SetOnRequestMode(IL_AHRS_10* ahrs, unsigned int syncDataOutputType, IL_BOOL waitForResponse)
 {
 
 	int errorCode;
@@ -1063,12 +1077,12 @@ IL_ERROR_CODE AHRS_10_setSetOnRequestMode(IL_AHRS_10* ahrs, unsigned int syncDat
 	if (!ahrs->isConnected)
 		return ILERR_NOT_CONNECTED;
 
-	//printf("inside AHRS_10_setSetOnRequestMode\n");
+	//printf("inside AHRS_10_SetOnRequestMode\n");
 
 	AHRS_10_Recive_size(ahrs);
 	errorCode = AHRS_10_writeOutCommand(ahrs, setonrequest_payload, sizeof(setonrequest_payload));
 
-	//printf("inside AHRS_10_setSetOnRequestMode done\n");
+	//printf("inside AHRS_10_SetOnRequestMode done\n");
 	return errorCode;
 }
 

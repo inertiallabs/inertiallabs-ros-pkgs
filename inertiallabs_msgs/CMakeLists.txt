@@ -10,6 +10,7 @@ add_message_files(
   imu_data.msg
   ins_data.msg
   sensor_data.msg
+  ahrs_data.msg
 )
 
 generate_messages(

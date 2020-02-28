@@ -1,6 +1,6 @@
 <launch>
-  <node pkg="inertiallabs_ins" type="onrequest_inertiallabs_ins" name="INS" output="screen">
-  <!--<node pkg="inertiallabs_ins" type="continues_inertiallabs_ins" name="INS" output="screen">-->
+  <node pkg="inertiallabs_ahrs_10" type="onrequest_inertiallabs_ahrs_10" name="AHRS_10" output="screen">
+  <!--<node pkg="inertiallabs_ahrs_10" type="continues_inertiallabs_ahrs_10" name="AHRS_10" output="screen">-->
    <param name="serial_port" type="string" value="/dev/ttyUSB0" />
    <param name="serial_baud" type="int" value="115200" />
    <!-- setting the output type and frequency -->

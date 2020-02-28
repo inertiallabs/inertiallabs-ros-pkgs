@@ -83,14 +83,14 @@ extern "C" {
 #define IL_AHRS_10_STOP_CMD_RECEIVE_SIZE            	0         /**< After Stop command no of bytes received. */
 #define IL_AHRS_10_SET_ONREQUEST_CMD_RECEIVE_SIZE   	146       /**< After OnRequestMode command no of bytes received. */
 #define IL_AHRS_10_CLB_DATA_CMD_RECEIVE_SIZE         	39       /**< After  AHRS_ClbData command no of bytes need to receive. */
-#define IL_AHRS_10_CLB_DATA_HR_DATA_CMD_RECEIVE_SIZE    57      /**< After AHRS_ClbHRData command no of bytes need to receive. */
+#define IL_AHRS_10_CLB_DATA_HR_DATA_CMD_RECEIVE_SIZE    60      /**< After AHRS_ClbHRData command no of bytes need to receive. */
 #define IL_AHRS_10_QUATERNION_CMD_RECEIVE_SIZE			39
 #define IL_AHRS_10_NMEA_CMD_RECEIVE_SIZE				100
 #define IL_AHRS_10_GET_DEV_INFO_CMD_RECEIVE_SIZE		169
 #define IL_READ_AHRS_10_PAR_CMD_RECEIVE_SIZE			56
 #define IL_LOAD_AHRS_10_PAR_CMD_RECEIVE_SIZE			2
 
-#define IL_AHRS_10_DBG 0                   /**< SDK Debug mode off. */
+#define IL_AHRS_10_DBG 1                   /**< SDK Debug mode off. */
 #define IL_AHRS_10_RAW_DATA 1
 #define IL_AHRS_10_DECODE_DATA 1
 	/**
@@ -183,6 +183,16 @@ extern "C" {
 
 	/**
 	 * \brief Allows registering a function which will be called whenever a new
+	 *  data packet is received from the AHRS_10 module after read parameter command.
+	 *
+	 * \param[in] AHRS_10 Pointer to the AHRS_10 control object.
+	 *
+	 * \return InertialLab error code.
+	 */
+	DLL_EXPORT IL_ERROR_CODE AHRS_10_ReadInternalParameters(IL_AHRS_10* ahrs, AHRS_10_SetInternalData* data);
+
+	/**
+	 * \brief Allows registering a function which will be called whenever a new
 	 * asynchronous data packet is received from the AHRS_10 module.
 	 *
 	 * \param[in] AHRS_10 Pointer to the AHRS_10 control object.
@@ -190,6 +200,7 @@ extern "C" {
 	 * \return InertialLab error code.
 	 */
 	DLL_EXPORT IL_ERROR_CODE AHRS_10_registerAsyncDataReceivedListener(IL_AHRS_10* ahrs, AHRS_10_NewDataReceivedListener listener);
+
 
 	/**
 	 * \brief Connects to a InertialLab AHRS_10 device.

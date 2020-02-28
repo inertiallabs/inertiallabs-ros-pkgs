@@ -1,5 +1,6 @@
 <launch>
-  <node pkg="ins_ros" type="ins_node" name="INS" output="screen">
+  <node pkg="inertiallabs_imu" type="onrequest_inertiallabs_imu" name="IMU_P" output="screen">
+  <!--<node pkg="inertiallabs_imu" type="continues_inertiallabs_imu" name="IMU_P" output="screen">-->
    <param name="serial_port" type="string" value="/dev/ttyUSB0" />
    <param name="serial_baud" type="int" value="115200" />
    <!-- setting the output type and frequency -->

@@ -272,7 +272,7 @@ void ilerror_msg(IL_ERROR_CODE il_error,std::string &msg)
 
 int main(int argc,char** argv)
 {
-	ros::init(argc,argv,"inertiallabs_ins");
+	ros::init(argc,argv,"continues_inertiallabs_ins");
 	ros::NodeHandle n;
 	ros::NodeHandle np("~");
 	ros::Rate r(100); // 100 hz
