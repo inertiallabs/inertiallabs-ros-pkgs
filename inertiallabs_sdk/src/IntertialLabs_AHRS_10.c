@@ -349,20 +349,17 @@ IL_ERROR_CODE AHRS_10_disconnect(IL_AHRS_10* ahrs)
 	inertial_criticalSection_dispose(&AHRS_10Int->critSecForResponseMatchAccess);
 	inertial_criticalSection_dispose(&AHRS_10Int->critSecForLatestAsyncDataAccess);
 
-
 	/* Free the memory associated with the AHRS_10 structure. */
 	//free(&AHRS_10Int->waitForThreadToStopServicingComPortEvent);
 	//free(&AHRS_10Int->waitForCommandResponseEvent);
 	//free(&AHRS_10Int->waitForThreadToStartServicingComPortEvent);
 	free(ahrs->internalData);
-
 	ahrs->isConnected = IL_FALSE;
 #if defined(WIN32) || defined(WIN64) 
 	Sleep(3000);
 #else
-	sleep(3);
+	//sleep(3);
 #endif 
-
 	return ILERR_NO_ERROR;
 }
 

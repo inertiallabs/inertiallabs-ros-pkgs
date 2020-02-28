@@ -62,21 +62,6 @@ extern "C" {
 #define IL_AHRS_10_USER_DEF_DATA_RECEIVE            10
 
 
-/**< AHRS-10 calibration */
-
-//TODO 
-
-// #define IL_AHRS_10_STOP_CMD          				0     /**< Stop command flag. */
-// #define IL_AHRS_10_ONREQUEST_CMD 			     	1	   /**< OnRequestMode command flag. */
-// #define IL_AHRS_10_CLB_DATA_RECEIVE 	 			2
-// #define IL_AHRS_10_CLB_HR_DATA_RECEIVE 	 			3
-// #define IL_AHRS_10_NMEA_RECEIVE						4
-// #define IL_AHRS_10_QUATERNION_RECEIVE				5
-// #define IL_READ_AHRS_10_PAR_RECEIVE					7
-// #define IL_LOAD_AHRS_10_PAR_RECEIVE     			8      /**< LoadINSpar command flag. */
-// #define IL_AHRS_10_GET_DEV_INFO_RECEIVE				9
-// #define IL_AHRS_10_USER_DEF_DATA_RECEIVE            10
-
 
 /**< User Defined Data */
 

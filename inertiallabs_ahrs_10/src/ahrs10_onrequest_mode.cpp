@@ -187,7 +187,7 @@ int main(int argc,char** argv)
 	np.param<int>("publish_rate",publish_rate,10);
 	np.param<int>("async_output_type",async_output_type,0);
 	np.param<int>("async_output_rate",async_output_rate,6);
-	np.param<int>("ahrs_output_format",ahrs_output_format,1);
+	np.param<int>("ahrs_output_format",ahrs_output_format,3);
 
 	pubahrs_data = np.advertise<inertiallabs_msgs::ahrs_data> ("/Inertial_Labs/ahrs_data",1);
 
@@ -263,6 +263,8 @@ int main(int argc,char** argv)
 	
 
 	ros::spin();
+	ros::shutdown();
 	AHRS_10_disconnect(&ahrs);
+	ROS_INFO("After AHRS_10_disconnect ");
 	return 0;
 }
