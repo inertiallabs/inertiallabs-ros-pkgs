@@ -146,7 +146,15 @@ Publish Gyro(x,y,z) , Accelation(x,y,z) , Magnetic (x,y,z) , Temprature , Input 
   
 Publish  imu data  for while you start the imu nodes in the arc folser . 
 
- 
+**Debug Mode**
+To see the debug data from the sdk you can enable the debug mode in IL_common.h .The file located inside `intertiallabs_sdk/include/IL_common.h` .
+
+```
+#define IL_DBG 0                   /**< 0 - SDK Debug mode off.
+                                        1 - SDK Debug mode on */
+
+
+```
 ## FAQ
 
 1. The driver can't open my device?\

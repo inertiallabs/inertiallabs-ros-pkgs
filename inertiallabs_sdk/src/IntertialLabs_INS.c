@@ -376,7 +376,7 @@ int INS_writeData_threadSafe(IL_INS* ins, unsigned char dataToSend[], unsigned i
 	INSInt = INS_getInternalData(ins);
 
 #if IL_DBG
-	printf("INS_writeData_threadSafe : 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x  \n", dataToSend[0], dataToSend[1], dataToSend[2],
+	printf("INS_writeData_threadSafe : 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x 0x%02x  \n\n\t", dataToSend[0], dataToSend[1], dataToSend[2],
 		dataToSend[3], dataToSend[4], dataToSend[5],
 		dataToSend[6], dataToSend[7], dataToSend[8]);
 
@@ -499,11 +499,15 @@ void* INS_communicationHandler(void* INSobj)
 			switch (ins->cmd_flag)
 			{
 			case IL_STOP_CMD:
+#if IL_DBG
 				printf("IL_STOP_CMD \n");
+# endif
 				break;
 
 			case IL_SET_ONREQUEST_CMD:
+#if IL_DBG
 				printf("IL_SET_ONREQUEST_CMD \n");
+#endif
 				break;
 
 			case IL_OPVT_RECEIVE:
@@ -537,11 +541,10 @@ void* INS_communicationHandler(void* INSobj)
 							responseBuilderBufferPos = 0;
 						}
 						/* See if we have even found the start of a response. */
-						if (((int)readBuffer[curResponsePos] == 170) && ((int)readBuffer[curResponsePos + 1] == 85)) {
-
-
-							printf(" found the start byte \n");
+						if (((int)readBuffer[curResponsePos] == 170) && ((int)readBuffer[curResponsePos + 1] == 85)) 
+							
 #if IL_DBG
+							printf(" found the start byte \n");
 							for (int i = 0; i < numOfBytesRead; i++)
 							{
 								printf("0x%02x  ", readBuffer[i]);
@@ -554,10 +557,9 @@ void* INS_communicationHandler(void* INSobj)
 							responseBuilderBufferPos = 0;
 
 						}
-						if (((int)readBuffer[curResponsePos] == 170) && ((int)readBuffer[curResponsePos + 1] == 68) && ((int)readBuffer[curResponsePos + 2] == 18) ) {
-
-							printf(" found the start byte \n");
+						if (((int)readBuffer[curResponsePos] == 170) && ((int)readBuffer[curResponsePos + 1] == 68) && ((int)readBuffer[curResponsePos + 2] == 18) ) {						
 #if IL_DBG
+							printf(" found the start byte \n");
 							for (int i = 0; i < numOfBytesRead; i++)
 							{
 								printf("0x%02x  ", readBuffer[i]);
@@ -583,7 +585,9 @@ void* INS_communicationHandler(void* INSobj)
 
 						if (responseBuilderBufferPos == INSInt->num_bytes_recive)
 						{
+#if IL_DBG							
 							printf(" one packet recive done in continues mode \n");
+#endif
 							//inertial_criticalSection_enter(&INSInt->critSecForResponseMatchAccess);
 							INS_processReceivedPacket(ins, responseBuilderBuffer, INSInt->num_bytes_recive);
 							responseBuilderBufferPos = 0;
@@ -597,10 +601,10 @@ void* INS_communicationHandler(void* INSobj)
 
 						}
 					}
+
+					break;
 				}
 
-				break;
-			}
 			case IL_READ_INS_PAR_RECEIVE:
 			{
 				INS_processReceivedPacket(ins, readBuffer, INSInt->num_bytes_recive);
@@ -626,8 +630,8 @@ void* INS_communicationHandler(void* INSobj)
 				printf("no cmd flag set \n");
 				break;
 			}
-
 		}
+
 	}
 	inertial_event_signal(INSInt->waitForThreadToStopServicingComPortEvent);
 
@@ -1401,8 +1405,9 @@ IL_ERROR_CODE INS_getPressureBarometricData(IL_INS* ins, INSCompositeData* data)
 	int Pbar_conv = 2;
 	INSInternal* INSInt;
 
+#if IL_DBG
 	printf("inside INS_getPressureBarometricData\n");
-
+# endif
 	INSInt = INS_getInternalData(ins);
 
 	if (INSInt->recive_flag != ILERR_DATA_IN_BUFFER)
@@ -1453,9 +1458,9 @@ IL_ERROR_CODE INS_getLatencyData(IL_INS* ins, INSPositionData* data)
 	IL_ERROR_CODE errorCode;
 	int i;
 	INSInternal* INSInt;
-
+#if IL_DBG
 	printf("inside INS_getLatencyData\n");
-
+#endif
 	INSInt = INS_getInternalData(ins);
 
 	if (INSInt->recive_flag != ILERR_DATA_IN_BUFFER)
@@ -1535,9 +1540,9 @@ IL_ERROR_CODE INS_GNSS_Details(IL_INS* ins , INSGnssData* data)
 	int i;
 	int gnss_conv = 100;
 	INSInternal* INSInt;
-
+#if IL_DBG
 	printf("inside INS_GNSS_Details \n");
-
+#endif
 	INSInt = INS_getInternalData(ins);
 
 	if (INSInt->recive_flag != ILERR_DATA_IN_BUFFER)
@@ -1676,9 +1681,9 @@ IL_ERROR_CODE INS_getGNSS_HeadPitch(IL_INS* ins, INSPositionData* data)
 	int i;
 	int gnss_conv = 100;
 	INSInternal* INSInt;
-
+#if IL_DBG
 	printf("inside INS_getGNSS_HeadPitch \n");
-
+#endif
 	INSInt = INS_getInternalData(ins);
 
 	if (INSInt->recive_flag != ILERR_DATA_IN_BUFFER)
@@ -1756,7 +1761,9 @@ IL_ERROR_CODE INS_SetMode(IL_INS* ins, int mode)
 IL_ERROR_CODE INS_Stop(IL_INS* ins)
 {
 	int errorCode;
+#if IL_DBG
 	printf("inside INS_Stop \n");
+#endif
 	unsigned char stop_payload[] = { 0XAA, 0x55, 0x00, 0x00, 0x07,0x00,0xFE ,0x05, 0x01 };
 
 	//printf("size of stop %d \n" , sizeof(stop_payload));
@@ -1775,8 +1782,9 @@ IL_ERROR_CODE INS_setSetOnRequestMode(IL_INS* ins, unsigned int syncDataOutputTy
 	if (!ins->isConnected)
 		return ILERR_NOT_CONNECTED;
 
+#if IL_DBG
 	printf("inside INS_setSetOnRequestMode\n");
-
+#endif
 	INS_Recive_size(ins);
 	errorCode = INS_writeOutCommand(ins, setonrequest_payload, sizeof(setonrequest_payload));
 
@@ -1791,9 +1799,9 @@ IL_ERROR_CODE INS_OPVTdata_Receive(IL_INS* ins)
 
 	if (!ins->isConnected)
 		return ILERR_NOT_CONNECTED;
-
+#if IL_DBG
 	printf("inside INS_OPVTdata_Recive \n");
-
+#endif
 	INS_Recive_size(ins);
 	errorCode = INS_writeOutCommand(ins, OPVTdata_payload, sizeof(OPVTdata_payload));
 
@@ -1807,9 +1815,9 @@ IL_ERROR_CODE INS_QPVTdata_Receive(IL_INS* ins)
 
 	if (!ins->isConnected)
 		return ILERR_NOT_CONNECTED;
-
+#if IL_DBG
 	printf("inside INS_QPVTdata_Receive \n");
-
+#endif
 	INS_Recive_size(ins);
 	errorCode = INS_writeOutCommand(ins, QPVTdata_payload, sizeof(QPVTdata_payload));
 
@@ -1823,9 +1831,9 @@ IL_ERROR_CODE INS_OPVT2Adata_Receive(IL_INS* ins)
 
 	if (!ins->isConnected)
 		return ILERR_NOT_CONNECTED;
-
+#if IL_DBG
 	printf("inside INS_OPVT2Adata_Receive \n");
-
+#endif
 	INS_Recive_size(ins);
 	errorCode = INS_writeOutCommand(ins, OPVT2Adata_payload, sizeof(OPVT2Adata_payload));
 
@@ -1839,9 +1847,9 @@ IL_ERROR_CODE INS_OPVT2AWdata_Receive(IL_INS* ins)
 
 	if (!ins->isConnected)
 		return ILERR_NOT_CONNECTED;
-
+#if IL_DBG
 	printf("inside INS_OPVT2AWdata_Receive \n");
-
+#endif
 	INS_Recive_size(ins);
 	errorCode = INS_writeOutCommand(ins, OPVT2AWdata_payload, sizeof(OPVT2AWdata_payload));
 
@@ -1855,9 +1863,9 @@ IL_ERROR_CODE INS_OPVT2AHRdata_Receive(IL_INS* ins)
 
 	if (!ins->isConnected)
 		return ILERR_NOT_CONNECTED;
-
+#if IL_DBG
 	printf("inside INS_OPVT2AHRdata_Receive \n");
-
+#endif
 	INS_Recive_size(ins);
 	errorCode = INS_writeOutCommand(ins, OPVT2AHRdata_payload, sizeof(OPVT2AHRdata_payload));
 
@@ -1872,9 +1880,9 @@ IL_ERROR_CODE INS_OPVTADdata_Receive(IL_INS* ins)
 
 	if (!ins->isConnected)
 		return ILERR_NOT_CONNECTED;
-
+#if IL_DBG
 	printf("inside INS_OPVTADdata_Receive \n");
-
+#endif
 	INS_Recive_size(ins);
 	errorCode = INS_writeOutCommand(ins, OPVTADdata_payload, sizeof(OPVTADdata_payload));
 
@@ -1890,9 +1898,9 @@ IL_ERROR_CODE INS_SensorsData_Receive(IL_INS* ins)
 
 	if (!ins->isConnected)
 		return ILERR_NOT_CONNECTED;
-
+#if IL_DBG
 	printf("inside INS_SensorsData_Receive \n");
-
+# endif
 	INS_Recive_size(ins);
 	errorCode = INS_writeOutCommand(ins, SensorsData_payload, sizeof(SensorsData_payload));
 
@@ -1909,9 +1917,9 @@ IL_ERROR_CODE INS_OPVT_rawIMUdata_Receive(IL_INS* ins)
 
 	if (!ins->isConnected)
 		return ILERR_NOT_CONNECTED;
-
+#if IL_DBG
 	printf("inside INS_OPVT_rawIMUdata_Receive \n");
-
+#endif
 	INS_Recive_size(ins);
 	errorCode = INS_writeOutCommand(ins, OPVT_rawIMUdata_payload, sizeof(OPVT_rawIMUdata_payload));
 
@@ -1928,9 +1936,9 @@ IL_ERROR_CODE INS_OPVT_GNSSextdata_Receive(IL_INS* ins)
 
 	if (!ins->isConnected)
 		return ILERR_NOT_CONNECTED;
-
+#if IL_DBG
 	printf("inside INS_OPVT_GNSSextdata_Receive \n");
-
+#endif
 	INS_Recive_size(ins);
 	errorCode = INS_writeOutCommand(ins, OPVT_GNSSextdata_payload, sizeof(OPVT_GNSSextdata_payload));
 
@@ -1948,9 +1956,9 @@ IL_ERROR_CODE SPAN_rawimu_Receive(IL_INS* ins)
 
 	if (!ins->isConnected)
 		return ILERR_NOT_CONNECTED;
-
+#if IL_DBG
 	printf("inside SPAN_rawimu_Receive \n");
-
+#endif
 	INS_Recive_size(ins);
 	errorCode = INS_writeOutCommand(ins, SPAN_rawimu_payload, sizeof(SPAN_rawimu_payload));
 
@@ -1967,9 +1975,9 @@ IL_ERROR_CODE UserDef_Data_Receive(IL_INS* ins)
 
 	if (!ins->isConnected)
 		return ILERR_NOT_CONNECTED;
-
+#if IL_DBG
 	printf("inside UserDef_Data_Receive \n");
-
+# endif
 	INS_Recive_size(ins);
 	errorCode = INS_writeOutCommand(ins, UserDef_Data_payload, sizeof(UserDef_Data_payload));
 
@@ -1986,9 +1994,9 @@ IL_ERROR_CODE UserDef_DataConfig_Receive(IL_INS* ins)
 
 	if (!ins->isConnected)
 		return ILERR_NOT_CONNECTED;
-
+#if IL_DBG
 	printf("inside UserDef_DataConfig_Receive \n");
-
+#endif
 	INS_Recive_size(ins);
 	errorCode = INS_writeOutCommand(ins, UserDef_DataConfig_payload, sizeof(UserDef_DataConfig_payload));
 
@@ -2005,9 +2013,9 @@ IL_ERROR_CODE Get_UserDef_DataStruct(IL_INS* ins)
 
 	if (!ins->isConnected)
 		return ILERR_NOT_CONNECTED;
-
+#if IL_DBG
 	printf("inside Get_UserDef_DataStruct \n");
-
+# endif
 	INS_Recive_size(ins);
 	errorCode = INS_writeOutCommand(ins, Get_UserDef_DataStruct_payload, sizeof(Get_UserDef_DataStruct_payload));
 
@@ -2022,9 +2030,9 @@ IL_ERROR_CODE INS_Minimaldata_Receive(IL_INS* ins)
 
 	if (!ins->isConnected)
 		return ILERR_NOT_CONNECTED;
-
+#if IL_DBG
 	printf("inside INS_Minimaldata_Receive \n");
-
+# endif
 	INS_Recive_size(ins);
 	errorCode = INS_writeOutCommand(ins, Minimaldata_payload, sizeof(Minimaldata_payload));
 
@@ -2039,9 +2047,9 @@ IL_ERROR_CODE INS_NMEA_Receive(IL_INS* ins)
 
 	if (!ins->isConnected)
 		return ILERR_NOT_CONNECTED;
-
+#if IL_DBG
 	printf("inside INS_NMEA_Receive \n");
-
+# endif
 	INS_Recive_size(ins);
 	errorCode = INS_writeOutCommand(ins, NMEA_payload, sizeof(NMEA_payload));
 
@@ -2056,9 +2064,9 @@ IL_ERROR_CODE INS_Sensors_NMEA_Receive(IL_INS* ins)
 
 	if (!ins->isConnected)
 		return ILERR_NOT_CONNECTED;
-
+#if IL_DBG
 	printf("inside INS_Sensors_NMEA_Receive \n");
-
+# endif
 	INS_Recive_size(ins);
 	errorCode = INS_writeOutCommand(ins, Sensors_NMEA_payload, sizeof(Sensors_NMEA_payload));
 
@@ -2073,9 +2081,9 @@ IL_ERROR_CODE INS_DevSelfTest(IL_INS* ins)
 
 	if (!ins->isConnected)
 		return ILERR_NOT_CONNECTED;
-
+#if IL_DBG
 	printf("inside INS_DevSelfTest \n");
-
+# endif
 	INS_Recive_size(ins);
 	errorCode = INS_writeOutCommand(ins, DevSelfTest_payload, sizeof(DevSelfTest_payload));
 
@@ -2089,9 +2097,9 @@ IL_ERROR_CODE INS_ReadINSpar(IL_INS* ins)
 
 	if (!ins->isConnected)
 		return ILERR_NOT_CONNECTED;
-
+#if IL_DBG
 	printf("inside INS_ReadINSpar \n");
-
+#endif
 	ins->cmd_flag = IL_READ_INS_PAR_RECEIVE;
 
 	INS_Recive_size(ins);
@@ -2109,9 +2117,9 @@ IL_ERROR_CODE INS_LoadINSpar(IL_INS* ins)
 
 	if (!ins->isConnected)
 		return ILERR_NOT_CONNECTED;
-
+#if IL_DBG
 	printf("inside INS_LoadINSpar \n");
-
+# endif
 	ins->cmd_flag = IL_LOAD_INS_PAR_RECEIVE;
 
 	//INS_Recive_size(ins);
@@ -2127,57 +2135,58 @@ void INS_Recive_size(IL_INS* ins)
 	INSInternal* INSInt;
 
 	INSInt = INS_getInternalData(ins);
-
+#if IL_DBG
 	printf("now ins->cmd_flag : %d", ins->cmd_flag);
+# endif
 	switch (ins->cmd_flag)
 	{
-	case IL_STOP_CMD:
-		INSInt->num_bytes_recive = IL_STOP_CMD_RECEIVE_SIZE;
-		break;
-	case IL_SET_ONREQUEST_CMD:
-		INSInt->num_bytes_recive = IL_SET_ONREQUEST_CMD_RECEIVE_SIZE;
-		break;
-	case IL_OPVT_RECEIVE:
-		INSInt->num_bytes_recive = IL_OPVT_CMD_RECEIVE_SIZE;
-		break;
-	case IL_QPVT_RECEIVE:
-		INSInt->num_bytes_recive = IL_QPVT_CMD_RECEIVE_SIZE;
-		break;
-	case IL_OPVT2A_RECEIVE:
-		INSInt->num_bytes_recive = IL_OPVT2A_CMD_RECEIVE_SIZE;
-		break;
-	case IL_OPVT2AW_RECEIVE:
-		INSInt->num_bytes_recive = IL_OPVT2AW_CMD_RECEIVE_SIZE;
-		break;
-	case IL_OPVT2AHR_RECEIVE:
-		INSInt->num_bytes_recive = IL_OPVT2AHR_CMD_RECEIVE_SIZE;
-		break;
-	case IL_OPVTAD_RECEIVE:
-		INSInt->num_bytes_recive = IL_OPVTAD_CMD_RECEIVE_SIZE;
-		break;
-	case IL_MINIMAL_DATA_RECEIVE:
-		INSInt->num_bytes_recive = IL_MINIMAL_DATA_CMD_RECEIVE_SIZE;
-		break;
-	case IL_DEV_SELF_TEST_RECEIVE:
-		INSInt->num_bytes_recive = IL_DEV_SELF_TEST_CMD_RECEIVE_SIZE;
-		break;
-	case IL_READ_INS_PAR_RECEIVE:
-		INSInt->num_bytes_recive = IL_READ_INS_PAR_CMD_RECEIVE_SIZE;
-		break;
-	case IL_LOAD_INS_PAR_RECEIVE:
-		INSInt->num_bytes_recive = IL_LOAD_INS_PAR_CMD_RECEIVE_SIZE;
-		break;
-	case IL_SENSOR_DATA_RECEIVE:
-		INSInt->num_bytes_recive = IL_SENSOR_DATA_CMD_RECEIVE_SIZE;
-		break;	
-	case IL_OPVT_RAWIMU_DATA_RECEIVE:
-		INSInt->num_bytes_recive = IL_OPVT_RAWIMU_DATA_CMD_RECEIVE_SIZE;
-		break;
-	case IL_OPVT_GNSSEXT_DATA_RECEIVE:
-		INSInt->num_bytes_recive = IL_OPVT_GNSSEXT_DATA_CMD_RECEIVE_SIZE;
-		break;
-	default:
-		break;
+		case IL_STOP_CMD:
+			INSInt->num_bytes_recive = IL_STOP_CMD_RECEIVE_SIZE;
+			break;
+		case IL_SET_ONREQUEST_CMD:
+			INSInt->num_bytes_recive = IL_SET_ONREQUEST_CMD_RECEIVE_SIZE;
+			break;
+		case IL_OPVT_RECEIVE:
+			INSInt->num_bytes_recive = IL_OPVT_CMD_RECEIVE_SIZE;
+			break;
+		case IL_QPVT_RECEIVE:
+			INSInt->num_bytes_recive = IL_QPVT_CMD_RECEIVE_SIZE;
+			break;
+		case IL_OPVT2A_RECEIVE:
+			INSInt->num_bytes_recive = IL_OPVT2A_CMD_RECEIVE_SIZE;
+			break;
+		case IL_OPVT2AW_RECEIVE:
+			INSInt->num_bytes_recive = IL_OPVT2AW_CMD_RECEIVE_SIZE;
+			break;
+		case IL_OPVT2AHR_RECEIVE:
+			INSInt->num_bytes_recive = IL_OPVT2AHR_CMD_RECEIVE_SIZE;
+			break;
+		case IL_OPVTAD_RECEIVE:
+			INSInt->num_bytes_recive = IL_OPVTAD_CMD_RECEIVE_SIZE;
+			break;
+		case IL_MINIMAL_DATA_RECEIVE:
+			INSInt->num_bytes_recive = IL_MINIMAL_DATA_CMD_RECEIVE_SIZE;
+			break;
+		case IL_DEV_SELF_TEST_RECEIVE:
+			INSInt->num_bytes_recive = IL_DEV_SELF_TEST_CMD_RECEIVE_SIZE;
+			break;
+		case IL_READ_INS_PAR_RECEIVE:
+			INSInt->num_bytes_recive = IL_READ_INS_PAR_CMD_RECEIVE_SIZE;
+			break;
+		case IL_LOAD_INS_PAR_RECEIVE:
+			INSInt->num_bytes_recive = IL_LOAD_INS_PAR_CMD_RECEIVE_SIZE;
+			break;
+		case IL_SENSOR_DATA_RECEIVE:
+			INSInt->num_bytes_recive = IL_SENSOR_DATA_CMD_RECEIVE_SIZE;
+			break;	
+		case IL_OPVT_RAWIMU_DATA_RECEIVE:
+			INSInt->num_bytes_recive = IL_OPVT_RAWIMU_DATA_CMD_RECEIVE_SIZE;
+			break;
+		case IL_OPVT_GNSSEXT_DATA_RECEIVE:
+			INSInt->num_bytes_recive = IL_OPVT_GNSSEXT_DATA_CMD_RECEIVE_SIZE;
+			break;
+		default:
+			break;
 	}
 }
 

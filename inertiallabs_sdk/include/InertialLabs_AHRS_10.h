@@ -75,7 +75,7 @@ extern "C" {
 #define IL_READ_AHRS_10_PAR_CMD_RECEIVE_SIZE			56
 #define IL_LOAD_AHRS_10_PAR_CMD_RECEIVE_SIZE			2
 
-#define IL_AHRS_10_DBG 1                   /**< SDK Debug mode off. */
+#define IL_AHRS_10_DBG 0                   /**< SDK Debug mode off. */
 #define IL_AHRS_10_RAW_DATA 1
 #define IL_AHRS_10_DECODE_DATA 1
 	/**

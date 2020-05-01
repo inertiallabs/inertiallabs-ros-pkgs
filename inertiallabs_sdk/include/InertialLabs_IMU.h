@@ -69,9 +69,7 @@ extern "C" {
 #define IL_READ_IMU_PAR_CMD_RECEIVE_SIZE			68
 #define IL_LOAD_IMU_PAR_CMD_RECEIVE_SIZE			2
 
-#define IL_DBG 0                   /**< SDK Debug mode off. */
-#define IL_RAW_DATA 1
-#define IL_DECODE_DATA 1
+
 	/**
 	 * \brief Holds connection information for accessing a IMU-P device.
 	 */

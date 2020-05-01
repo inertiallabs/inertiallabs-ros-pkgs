@@ -851,8 +851,10 @@ IL_ERROR_CODE IMU_YPR(IL_IMU* imu, IMUCompositeData* data)
 	int i;
 	IMUInternal* IMUInt;
 
+#if IL_DBG
 	printf("inside IMU_YPR\n");
 
+# endif
 	IMUInt = IMU_getInternalData(imu);
 
 	if (IMUInt->recive_flag != ILERR_DATA_IN_BUFFER)
@@ -1058,7 +1060,9 @@ IL_ERROR_CODE IMU_SetMode(IL_IMU* imu, int mode)
 IL_ERROR_CODE IMU_Stop(IL_IMU* imu)
 {
 	int errorCode;
+#if IL_DBG
 	printf("Stopping the IMU device \n");
+# endif
 	unsigned char stop_payload[] = { 0XAA, 0x55, 0x00, 0x00, 0x07,0x00,0xFE ,0x05, 0x01 };
 
 	if (!imu->isConnected)
@@ -1079,13 +1083,12 @@ IL_ERROR_CODE IMU_setSetOnRequestMode(IL_IMU* imu, unsigned int syncDataOutputTy
 
 	if (!imu->isConnected)
 		return ILERR_NOT_CONNECTED;
-
-	//printf("inside IMU_setSetOnRequestMode\n");
-
+#if IL_DBG
+	printf("inside IMU_setSetOnRequestMode\n");
+# endif
 	IMU_Recive_size(imu);
 	errorCode = IMU_writeOutCommand(imu, setonrequest_payload, sizeof(setonrequest_payload));
 
-	//printf("inside IMU_setSetOnRequestMode done\n");
 	return errorCode;
 }
 
@@ -1096,9 +1099,9 @@ IL_ERROR_CODE IMU_ClbData_Receive(IL_IMU* imu)
 
 	if (!imu->isConnected)
 		return ILERR_NOT_CONNECTED;
-
-	//printf("inside IMU_ClbData_Receive \n");
-
+#if IL_DBG
+	printf("inside IMU_ClbData_Receive \n");
+# endif
 	IMU_Recive_size(imu);
 	errorCode = IMU_writeOutCommand(imu, ClbData_payload, sizeof(ClbData_payload));
 
@@ -1112,9 +1115,9 @@ IL_ERROR_CODE IMU_GAdata_Receive(IL_IMU* imu)
 
 	if (!imu->isConnected)
 		return ILERR_NOT_CONNECTED;
-
-	//printf("inside IMU_GAdata_Receive \n");
-
+#if IL_DBG
+	printf("inside IMU_GAdata_Receive \n");
+# endif
 	IMU_Recive_size(imu);
 	errorCode = IMU_writeOutCommand(imu, GAdata_payload, sizeof(GAdata_payload));
 
@@ -1128,9 +1131,9 @@ IL_ERROR_CODE IMU_Orientation_Receive(IL_IMU* imu)
 
 	if (!imu->isConnected)
 		return ILERR_NOT_CONNECTED;
-
-	//printf("inside IMU_Orientation_Receive \n");
-
+#if IL_DBG
+	printf("inside IMU_Orientation_Receive \n");
+# endif
 	IMU_Recive_size(imu);
 	errorCode = IMU_writeOutCommand(imu, Orientation_payload, sizeof(Orientation_payload));
 
@@ -1144,9 +1147,9 @@ IL_ERROR_CODE IMU_PStabilization_Receive(IL_IMU* imu)
 
 	if (!imu->isConnected)
 		return ILERR_NOT_CONNECTED;
-
-	//printf("inside IMU_PStabilization_Receive \n");
-
+#if IL_DBG
+	printf("inside IMU_PStabilization_Receive \n");
+# endif
 	IMU_Recive_size(imu);
 	errorCode = IMU_writeOutCommand(imu, PStabilization_payload, sizeof(PStabilization_payload));
 
@@ -1160,9 +1163,9 @@ IL_ERROR_CODE IMU_NMEA_Receive(IL_IMU* imu)
 
 	if (!imu->isConnected)
 		return ILERR_NOT_CONNECTED;
-
-	//printf("inside IMU_NMEA_Receive \n");
-
+#if IL_DBG
+	printf("inside IMU_NMEA_Receive \n");
+# endif
 	IMU_Recive_size(imu);
 	errorCode = IMU_writeOutCommand(imu, NMEA_payload, sizeof(NMEA_payload));
 
@@ -1177,9 +1180,9 @@ IL_ERROR_CODE ReadIMUpar(IL_IMU* imu)
 
 	if (!imu->isConnected)
 		return ILERR_NOT_CONNECTED;
-
-	//printf("inside ReadIMUpar \n");
-
+#if IL_DBG
+	printf("inside ReadIMUpar \n");
+# endif
 	imu->cmd_flag = IL_READ_IMU_PAR_RECEIVE;
 
 	IMU_Recive_size(imu);
@@ -1197,9 +1200,9 @@ IL_ERROR_CODE LoadIMUpar(IL_IMU* imu)
 
 	if (!imu->isConnected)
 		return ILERR_NOT_CONNECTED;
-
+#if IL_DBG
 	printf("inside LoadIMUpar \n");
-
+# endif
 	imu->cmd_flag = IL_LOAD_IMU_PAR_RECEIVE;
 
 	//IMU_Recive_size(imu);
@@ -1216,9 +1219,9 @@ IL_ERROR_CODE IMU_GetDevInfo(IL_IMU* imu)
 
 	if (!imu->isConnected)
 		return ILERR_NOT_CONNECTED;
-
-	//printf("inside IMU_GetDevInfo \n");
-
+#if IL_DBG
+	printf("inside IMU_GetDevInfo \n");
+# endif
 	IMU_Recive_size(imu);
 	errorCode = IMU_writeOutCommand(imu, GetDevInfo_payload, sizeof(GetDevInfo_payload));
 

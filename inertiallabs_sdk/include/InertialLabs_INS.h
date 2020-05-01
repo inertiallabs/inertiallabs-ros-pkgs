@@ -87,9 +87,6 @@ extern "C" {
 #define IL_USERDEF_DATA_CMD_RECEIVE_SIZE        00        /**< After User Defined Data command no of bytes need to receive. */
 #define IL_SPAN_RAWIMU_CMD_RECEIVE_SIZE         72        /**< After SPAN rawimu command no of bytes need to receive. */
 
-#define IL_DBG 0                   /**< SDK Debug mode off. */
-#define IL_RAW_DATA 0
-#define IL_DECODE_DATA 1
 	/**
 	 * \brief Holds connection information for accessing a INS device.
 	 */
