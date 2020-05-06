@@ -26,9 +26,11 @@
 #pragma warning(pop)
 #endif
 
+
 #include "InertialLabs_services.h"
 #include "IL_kinematics.h"
 #include "IL_linearAlgebra.h"
+#include "IL_common.h"
 
 #if defined(EXPORT_TO_DLL)
 #define DLL_EXPORT __declspec(dllexport)

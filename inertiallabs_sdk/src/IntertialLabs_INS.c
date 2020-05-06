@@ -954,6 +954,7 @@ void INS_processReceivedPacket(IL_INS* ins, unsigned char buffer[], int num_byte
 
 	inertial_criticalSection_enter(&INSInt->critSecForLatestAsyncDataAccess);
 	INSInt->dataBuffer = buffer;
+	INSInt->recive_flag = ILERR_DATA_IN_BUFFER;
 	inertial_criticalSection_leave(&INSInt->critSecForLatestAsyncDataAccess);
 
 #if  IL_RAW_DATA
