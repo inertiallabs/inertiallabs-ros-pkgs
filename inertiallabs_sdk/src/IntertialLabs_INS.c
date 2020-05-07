@@ -604,9 +604,9 @@ void* INS_communicationHandler(void* INSobj)
 
 						}
 					}
-
-					break;
+					
 				}
+				break;
 			}
 			case IL_READ_INS_PAR_RECEIVE:
 			{
