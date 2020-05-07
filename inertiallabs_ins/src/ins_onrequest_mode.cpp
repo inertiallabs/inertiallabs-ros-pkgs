@@ -126,7 +126,7 @@ void publish_device()
 
 	if(pubsens_data.getNumSubscribers()>0)
 	{
-		ROS_INFO("subscribed");
+		//ROS_INFO("subscribed");
 		
 		il_error = INS_getGyroAccMag(&ins,&sensor_data);
 		if(il_error!=ILERR_NO_ERROR)
@@ -163,7 +163,7 @@ void publish_device()
 	if(pubins_data.getNumSubscribers()>0)
 	{
 			
-		ROS_INFO("subscribed");
+		//ROS_INFO("subscribed");
 		il_error=INS_YPR(&ins,&sensor_data);
 		if(il_error!=ILERR_NO_ERROR)
 		{
@@ -377,6 +377,7 @@ int main(int argc,char** argv)
   	if(async_output_type ==0)
 	{
 		ROS_INFO("publishing at %d Hz\n",publish_rate);
+		ROS_INFO("rostopic echo the topics to see the data");
 		pub_timer=np.createTimer(ros::Duration(1.0/(double)publish_rate),publish_timer);
 	}
 	

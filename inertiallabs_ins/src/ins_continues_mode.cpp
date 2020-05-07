@@ -131,7 +131,7 @@ void publish_device()
 
 	if(pubsens_data.getNumSubscribers()>0)
 	{
-		ROS_INFO("subscribed");
+		//ROS_INFO("subscribed");
 		
 		il_err = INS_getGyroAccMag(&ins,&sensor_data);
 		if(il_err!=ILERR_NO_ERROR)
@@ -168,7 +168,7 @@ void publish_device()
 	if(pubins_data.getNumSubscribers()>0)
 	{
 			
-		ROS_INFO("subscribed");
+		//ROS_INFO("subscribed");
 		il_err = INS_YPR(&ins,&sensor_data);
 		if(il_err!=ILERR_NO_ERROR)
 		{
@@ -303,7 +303,6 @@ int main(int argc,char** argv)
 	ROS_INFO("connecting to INS. port: %s at a baudrate:%d\n",port.c_str(),baudrate);
 
 	il_err=INS_connect(&ins,port.c_str(),baudrate);
-	std:: cout << "after INS_connect \n";
 	if(il_err!=ILERR_NO_ERROR) 
 	{
 		ilerror_msg(il_err,il_error_msg);
@@ -413,6 +412,7 @@ int main(int argc,char** argv)
   	if(async_output_type ==0)
 	{
 		ROS_INFO("publishing at %d Hz\n",publish_rate);
+		ROS_INFO("rostopic echo the topics to see the data");
 		pub_timer=np.createTimer(ros::Duration(1.0/(double)publish_rate),publish_timer);
 	}
 
@@ -420,5 +420,6 @@ int main(int argc,char** argv)
 	//INS_registerDataReceivedListener(&ins,&asyncDataListener);
 	ros::spin();
 	INS_disconnect(&ins);
+	ROS_INFO("Disconnecting the INS");
 	return 0;
 }
