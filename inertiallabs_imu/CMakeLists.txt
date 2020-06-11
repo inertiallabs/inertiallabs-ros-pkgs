@@ -33,7 +33,7 @@ include_directories(${system_lib_INCLUDE_DIRS})
 include_directories(../inertiallabs_sdk/include)
 
 
-add_library(IntertialLabs_IMU ../inertiallabs_sdk/src/IntertialLabs_IMU.c)
+add_library(InertialLabs_IMU ../inertiallabs_sdk/src/InertialLabs_IMU.c)
 add_library(InertialLabs_services ../inertiallabs_sdk/src/arch/linux/InertialLabs_services.c)
 
 target_link_libraries(InertialLabs_services pthread)
@@ -41,21 +41,21 @@ target_link_libraries(InertialLabs_services pthread)
 
 add_executable(imu_continues_mode  src/imu_continues_mode.cpp
                          ../inertiallabs_sdk/src/arch/linux/InertialLabs_services.c
-                         ../inertiallabs_sdk/src/IntertialLabs_IMU.c
+                         ../inertiallabs_sdk/src/InertialLabs_IMU.c
 )
 
 #target_link_libraries(InertialLabs_services pthread)
 
-target_link_libraries(imu_continues_mode ${catkin_LIBRARIES} InertialLabs_services IntertialLabs_IMU)
+target_link_libraries(imu_continues_mode ${catkin_LIBRARIES} InertialLabs_services InertialLabs_IMU)
 
 
 add_executable(imu_onrequest_mode  src/imu_onrequest_mode.cpp
                          ../inertiallabs_sdk/src/arch/linux/InertialLabs_services.c
-                         ../inertiallabs_sdk/src/IntertialLabs_IMU.c
+                         ../inertiallabs_sdk/src/InertialLabs_IMU.c
 )
 
 add_dependencies(imu_onrequest_mode inertiallabs_imu_generate_messages_cpp)
 
 #target_link_libraries(InertialLabs_services pthread)
 
-target_link_libraries(imu_onrequest_mode ${catkin_LIBRARIES} InertialLabs_services IntertialLabs_IMU)
+target_link_libraries(imu_onrequest_mode ${catkin_LIBRARIES} InertialLabs_services InertialLabs_IMU)

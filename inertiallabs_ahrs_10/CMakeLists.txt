@@ -32,7 +32,7 @@ include_directories(${system_lib_INCLUDE_DIRS})
 
 include_directories(../inertiallabs_sdk/include)
 
-add_library(IntertialLabs_AHRS_10 ../inertiallabs_sdk/src/IntertialLabs_AHRS_10.c)
+add_library(InertialLabs_AHRS_10 ../inertiallabs_sdk/src/InertialLabs_AHRS_10.c)
 
 
 add_library(InertialLabs_services ../inertiallabs_sdk/src/arch/linux/InertialLabs_services.c)
@@ -40,15 +40,15 @@ target_link_libraries(InertialLabs_services pthread)
 
 add_executable(ahrs10_onrequest_mode  src/ahrs10_onrequest_mode.cpp
                          ../inertiallabs_sdk/src/arch/linux/InertialLabs_services.c
-                         ../inertiallabs_sdk/src/IntertialLabs_AHRS_10.c
+                         ../inertiallabs_sdk/src/InertialLabs_AHRS_10.c
 )
 
-target_link_libraries(ahrs10_onrequest_mode ${catkin_LIBRARIES} InertialLabs_services IntertialLabs_AHRS_10 )
+target_link_libraries(ahrs10_onrequest_mode ${catkin_LIBRARIES} InertialLabs_services InertialLabs_AHRS_10 )
 
 add_executable(ahrs10_continues_mode  src/ahrs10_continues_mode.cpp
                          ../inertiallabs_sdk/src/arch/linux/InertialLabs_services.c
-                         ../inertiallabs_sdk/src/IntertialLabs_AHRS_10.c
+                         ../inertiallabs_sdk/src/InertialLabs_AHRS_10.c
 )
 
-target_link_libraries(ahrs10_continues_mode ${catkin_LIBRARIES} InertialLabs_services IntertialLabs_AHRS_10 )
+target_link_libraries(ahrs10_continues_mode ${catkin_LIBRARIES} InertialLabs_services InertialLabs_AHRS_10 )
 
