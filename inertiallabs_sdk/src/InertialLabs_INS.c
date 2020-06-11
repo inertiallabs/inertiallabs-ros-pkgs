@@ -476,7 +476,6 @@ void* INS_communicationHandler(void* INSobj)
 
 		INS_readData_threadSafe(ins, readBuffer, READ_BUFFER_SIZE, &numOfBytesRead);
 
-
 		if (numOfBytesRead == 0)
 		{
 			// There was no data. Sleep for a short amount of time before continuing.
@@ -541,8 +540,9 @@ void* INS_communicationHandler(void* INSobj)
 							responseBuilderBufferPos = 0;
 						}
 						/* See if we have even found the start of a response. */
-						if (((int)readBuffer[curResponsePos] == 170) && ((int)readBuffer[curResponsePos + 1] == 85)) 
-							
+
+						if (((int)readBuffer[curResponsePos] == 170) && ((int)readBuffer[curResponsePos + 1] == 85)){
+												
 #if IL_DBG
 							printf(" found the start byte \n");
 							for (int i = 0; i < numOfBytesRead; i++)
@@ -558,6 +558,7 @@ void* INS_communicationHandler(void* INSobj)
 
 						}
 						if (((int)readBuffer[curResponsePos] == 170) && ((int)readBuffer[curResponsePos + 1] == 68) && ((int)readBuffer[curResponsePos + 2] == 18) ) {						
+							
 #if IL_DBG
 							printf(" found the start byte \n");
 							for (int i = 0; i < numOfBytesRead; i++)
@@ -585,11 +586,13 @@ void* INS_communicationHandler(void* INSobj)
 
 						if (responseBuilderBufferPos == INSInt->num_bytes_recive)
 						{
+							
 #if IL_DBG							
-							printf(" one packet recive done in continues mode \n");
+							printf(" one packet recive done ins continues mode \n");
 #endif
 							//inertial_criticalSection_enter(&INSInt->critSecForResponseMatchAccess);
 							INS_processReceivedPacket(ins, responseBuilderBuffer, INSInt->num_bytes_recive);
+
 							responseBuilderBufferPos = 0;
 							haveFoundStartOfCommand = IL_FALSE;
 							//inertial_criticalSection_leave(&INSInt->critSecForResponseMatchAccess);
@@ -601,10 +604,10 @@ void* INS_communicationHandler(void* INSobj)
 
 						}
 					}
-
-					break;
+					
 				}
-
+				break;
+			}
 			case IL_READ_INS_PAR_RECEIVE:
 			{
 				INS_processReceivedPacket(ins, readBuffer, INSInt->num_bytes_recive);
@@ -627,7 +630,9 @@ void* INS_communicationHandler(void* INSobj)
 				
 			}
 			default:
+#if IL_DBG
 				printf("no cmd flag set \n");
+#endif 
 				break;
 			}
 		}
@@ -954,6 +959,7 @@ void INS_processReceivedPacket(IL_INS* ins, unsigned char buffer[], int num_byte
 
 	inertial_criticalSection_enter(&INSInt->critSecForLatestAsyncDataAccess);
 	INSInt->dataBuffer = buffer;
+	INSInt->recive_flag = ILERR_DATA_IN_BUFFER;
 	inertial_criticalSection_leave(&INSInt->critSecForLatestAsyncDataAccess);
 
 #if  IL_RAW_DATA
@@ -998,7 +1004,7 @@ IL_ERROR_CODE INS_YPR(IL_INS* ins, INSCompositeData* data)
 	int i;
 	INSInternal* INSInt;
 
-	printf("inside INS_YPR\n");
+	//printf("inside INS_YPR\n");
 
 	INSInt = INS_getInternalData(ins);
 	if (INSInt->recive_flag != ILERR_DATA_IN_BUFFER)
@@ -1363,7 +1369,7 @@ IL_ERROR_CODE INS_getQuaternionData(IL_INS* ins, INSCompositeData* data)
 	int quat_conv = 10000;
 	INSInternal* INSInt;
 
-	printf("inside INS_getQuaternionData\n");
+	//printf("inside INS_getQuaternionData\n");
 
 	INSInt = INS_getInternalData(ins);
 
@@ -1746,7 +1752,9 @@ IL_ERROR_CODE INS_SetMode(IL_INS* ins, int mode)
 	}
 	else
 	{
-		printf("now you can call datamode functions you want to recive from the INS ");
+#if IL_DBG
+		printf("now you can call datamode functions you want to recive from the INS \n ");
+#endif
 #if defined(WIN32) || defined(WIN64) 
 		Sleep(2000);
 #else
@@ -1787,8 +1795,9 @@ IL_ERROR_CODE INS_setSetOnRequestMode(IL_INS* ins, unsigned int syncDataOutputTy
 #endif
 	INS_Recive_size(ins);
 	errorCode = INS_writeOutCommand(ins, setonrequest_payload, sizeof(setonrequest_payload));
-
+#if IL_DBG
 	printf("inside INS_setSetOnRequestMode done\n");
+#endif
 	return errorCode;
 }
 
