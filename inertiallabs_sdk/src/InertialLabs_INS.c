@@ -1044,7 +1044,7 @@ void INS_processReceivedPacket(IL_INS* ins, unsigned char buffer[], int num_byte
 {
 	INSInternal* INSInt;
 
-	INSInt->dataBuffer = NULL;
+	//INSInt->dataBuffer = NULL;
 
 	INSInt = INS_getInternalData(ins);
 
