@@ -137,13 +137,15 @@ void publish_device()
 		if(il_err!=ILERR_NO_ERROR)
 		{
 			ilerror_msg(il_err,il_error_msg);
-			ROS_FATAL( "%s" ,il_error_msg.c_str());exit(EXIT_FAILURE);
+			ROS_FATAL( "%s" ,il_error_msg.c_str());
+			
+			//exit(EXIT_FAILURE);
 		}
 		il_err = INS_getPressureBarometricData(&ins,&sensor_data);
 		if(il_err!=ILERR_NO_ERROR)
 		{
 			ilerror_msg(il_err,il_error_msg);
-			ROS_FATAL( "%s" ,il_error_msg.c_str());exit(EXIT_FAILURE);
+			ROS_FATAL( "%s" ,il_error_msg.c_str());//exit(EXIT_FAILURE);
 		}
 
 		msg_sensor_data.header.seq=seq;
@@ -173,7 +175,7 @@ void publish_device()
 		if(il_err!=ILERR_NO_ERROR)
 		{
 			ilerror_msg(il_err,il_error_msg);
-			ROS_FATAL( "%s" ,il_error_msg.c_str());exit(EXIT_FAILURE);
+			ROS_FATAL( "%s" ,il_error_msg.c_str());//exit(EXIT_FAILURE);
 		}
 				
 		msg_ins_data.header.seq=seq;
@@ -193,7 +195,7 @@ void publish_device()
 		if(il_err!=ILERR_NO_ERROR)
 		{
 			ilerror_msg(il_err,il_error_msg);
-			ROS_FATAL( "%s" ,il_error_msg.c_str());exit(EXIT_FAILURE);
+			ROS_FATAL( "%s" ,il_error_msg.c_str());//exit(EXIT_FAILURE);
 		}
 
 		msg_gps_data.header.seq=seq;
@@ -214,7 +216,7 @@ void publish_device()
 		if(il_err!=ILERR_NO_ERROR)
 		{
 			ilerror_msg(il_err,il_error_msg);
-			ROS_FATAL( "%s" ,il_error_msg.c_str());exit(EXIT_FAILURE);
+			ROS_FATAL( "%s" ,il_error_msg.c_str());//exit(EXIT_FAILURE);
 		}
 		
 		msg_ins_data.header.seq=seq;
@@ -278,14 +280,14 @@ int main(int argc,char** argv)
 	ros::Rate r(100); // 100 hz
 	std::string port;
 
-	INSSetInternalData data;
+	//INSSetInternalData data;
 
 	//commadn line varibales
 
 	int baudrate,publish_rate,async_output_rate,async_output_type;
 	np.param<std::string>("serial_port",port,"/dev/ttyUSB0");
-	np.param<int>("serial_baud",baudrate,115200);
-	np.param<int>("publish_rate",publish_rate,10);
+	np.param<int>("serial_baud",baudrate,460800);
+	np.param<int>("publish_rate",publish_rate,100);
 	np.param<int>("async_output_type",async_output_type,0);
 	np.param<int>("async_output_rate",async_output_rate,6);
 	np.param<int>("ins_output_format",ins_output_format,IL_OPVT_RECEIVE);
@@ -322,15 +324,15 @@ int main(int argc,char** argv)
 		ROS_FATAL("stop command error");exit(EXIT_FAILURE);
 	}
 
-	il_err= INS_ReadINSpar(&ins);
-	ros::Duration(2).sleep();
-	if(il_err!=ILERR_NO_ERROR)
-	{
-		ilerror_msg(il_err,il_error_msg);
-		ROS_FATAL("read command error"); exit(EXIT_FAILURE);
-	}
+	// il_err= INS_ReadINSpar(&ins);
+	// ros::Duration(2).sleep();
+	// if(il_err!=ILERR_NO_ERROR)
+	// {
+	// 	ilerror_msg(il_err,il_error_msg);
+	// 	ROS_FATAL("read command error"); exit(EXIT_FAILURE);
+	// }
 
-	INS_ReadInternalParameters(&ins,&data);
+	//INS_ReadInternalParameters(&ins,&data);
 
 
 	/*
@@ -413,6 +415,7 @@ int main(int argc,char** argv)
 	{
 		ROS_INFO("publishing at %d Hz\n",publish_rate);
 		ROS_INFO("rostopic echo the topics to see the data");
+
 		pub_timer=np.createTimer(ros::Duration(1.0/(double)publish_rate),publish_timer);
 	}
 

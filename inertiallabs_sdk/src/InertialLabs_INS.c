@@ -561,6 +561,7 @@ void* INS_communicationHandler(void* INSobj)
 							if((int)(readBuffer[curResponsePos + 4]) == 134 ||
 							  (int)(readBuffer[curResponsePos + 4]) == 56 )
 							  {
+								  printf(" [INFO] Initial Alignment Done !!! \n");
 								  memset(readBuffer, 0x00, sizeof(unsigned char) * READ_BUFFER_SIZE);
 							  }
 
@@ -997,6 +998,8 @@ IL_ERROR_CODE INS_ReadInternalParameters(IL_INS* ins, INSSetInternalData* data)
 		data->Antenna_Pos_Up);
 
 	printf("\n Baro_altimeter : %d \n ", data->Baro_Altimeter);
+
+	//INSInt->dataBuffer = NULL;
 
 	return ILERR_NO_ERROR;
 
