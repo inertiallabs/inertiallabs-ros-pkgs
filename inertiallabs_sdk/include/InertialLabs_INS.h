@@ -65,9 +65,9 @@ extern "C" {
 #define IL_NMEA_RECEIVE					14     /**< INS NMEA Output data format command flag. */
 #define IL_NMEA_SENSORS_RECEIVE			15     /**< INS and Sensors NMEA Output data format command flag. */
 #define IL_USERDEF_DATA_RECEIVE			16     /**< User Defined Data format command flag. */
-
 #define IL_DEV_SELF_TEST_RECEIVE    	17      /**< DevSelfTest command flag. */
 #define IL_LOAD_INS_PAR_RECEIVE     	18     /**< LoadINSpar command flag. */
+#define IL_INITIAL_ALIGNMENT			19		 /**< Initial alignment command flag. */
 
 #define IL_STOP_CMD_RECEIVE_SIZE            	0         /**< After Stop command no of bytes received. */
 #define IL_SET_ONREQUEST_CMD_RECEIVE_SIZE   	146       /**< After OnRequestMode command no of bytes received. */
@@ -88,7 +88,8 @@ extern "C" {
 #define IL_OPVT_GNSSEXT_DATA_CMD_RECEIVE_SIZE	194       /**< After INS OPVT GNSSext data command no of bytes need to receive. */
 #define IL_USERDEF_DATA_CMD_RECEIVE_SIZE        00        /**< After User Defined Data command no of bytes need to receive. */
 #define IL_SPAN_RAWIMU_CMD_RECEIVE_SIZE         72        /**< After SPAN rawimu command no of bytes need to receive. */
-
+#define IL_INITIAL_ALIGNMENT_SHORT_SIZE			58		  /**< Initial alignment short bytes need to receive. */	
+#define IL_INITIAL_ALIGNMENT_EXTENDED_SIZE 		136		  /**< initial alignment extended bytes need to receive. */	
 	/**
 	 * \brief Holds connection information for accessing a INS device.
 	 */
@@ -190,6 +191,54 @@ extern "C" {
 		int       Baro_Altimeter;
 
 	} INSSetInternalData;
+
+
+
+	typedef struct {
+
+		float	  Gyros_bias1;
+		float	  Gyros_bias2;
+		float	  Gyros_bias3;
+		float    Average_acceleration1;
+		float    Average_acceleration2;
+		float    Average_acceleration3;
+		float    Average_magnfield1;
+		float    Average_magnfield2;
+		float    Average_magnfield3;
+		float    Initial_Heading;
+		float 	 Initial_Roll;
+		float    Initial_Pitch;
+
+		int       USW;
+
+		float    temp_gyro1;
+		float    temp_gyro2;
+		float    temp_gyro3;
+
+		float    temp_acc1;
+		float    temp_acc2;
+		float    temp_acc3;
+
+		float    temp_mag1;
+		float    temp_mag2;
+		float    temp_mag3;
+
+
+		double	  temp_pressure_sensor;
+		double	  pressure_data;
+
+		double 	  Latitude;
+		double    Longitude;
+		double 	  Altitude;
+
+		float     Velocity_V_east;
+		float 	  Velocity_V_north;
+		float     Velocity_V_up;
+		double    Gravity_G; 
+		
+
+
+	} INSSetInitialData;
 
 	
 	/**
@@ -664,6 +713,10 @@ extern "C" {
 	 * \return InertialLab error code.
 	 */
 	DLL_EXPORT IL_ERROR_CODE INS_LoadINSpar(IL_INS* ins);
+
+
+	DLL_EXPORT IL_ERROR_CODE INS_Alignment(IL_INS* ins, INSSetInitialData* data);
+
 
 
 

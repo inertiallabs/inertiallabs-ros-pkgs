@@ -130,6 +130,8 @@ typedef struct {
 	int 					num_bytes_recive;
 	int 					recive_flag;
 
+	int						initial_align_running;
+
 	INSCompositeData		lastestAsyncData;
 
 	/**
@@ -556,6 +558,12 @@ void* INS_communicationHandler(void* INSobj)
 							haveFoundStartOfCommand = IL_TRUE;
 							responseBuilderBufferPos = 0;
 
+							if((int)(readBuffer[curResponsePos + 4]) == 134 ||
+							  (int)(readBuffer[curResponsePos + 4]) == 56 )
+							  {
+								  memset(readBuffer, 0x00, sizeof(unsigned char) * READ_BUFFER_SIZE);
+							  }
+
 						}
 						if (((int)readBuffer[curResponsePos] == 170) && ((int)readBuffer[curResponsePos + 1] == 68) && ((int)readBuffer[curResponsePos + 2] == 18) ) {						
 							
@@ -807,6 +815,85 @@ IL_ERROR_CODE INS_ReadRawImuParameters(IL_INS* ins, INSRawImuData* data)
 
 }
 
+IL_ERROR_CODE INS_Alignment(IL_INS* ins, INSSetInitialData* data)
+{
+	INSInternal* INSInt;
+	INSInt = INS_getInternalData(ins);
+
+	int i = 4;
+
+	int data_size = (int)(*(int16_t*)(&(INSInt->dataBuffer[i + 0])));
+
+	data->Gyros_bias1 = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 2])));
+
+	data->Gyros_bias2 = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 6])));
+
+	data->Gyros_bias3 = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 10]))) ;
+
+	data->Average_acceleration1 = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 14]))) ;
+
+	data->Average_acceleration2 = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 18]))) ;
+
+	data->Average_acceleration3 = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 22]))) ;
+
+	data->Average_magnfield1 = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 26])));
+
+	data->Average_magnfield2 = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 30]))) ;
+
+	data->Average_magnfield3 = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 34]))) ;
+
+	data->Initial_Heading = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 38]))) ;
+
+	data->Initial_Roll = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 42]))) ;
+
+	data->Initial_Pitch = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 46]))) ;
+
+
+	if(data_size == 128)
+	{
+		data->temp_pressure_sensor = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 52])));
+
+		data->pressure_data = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 56]))) ;
+
+		data->temp_gyro1 = (float)(*(int16_t*)(&(INSInt->dataBuffer[i + 60]))) ;
+
+		data->temp_gyro2 = (float)(*(int16_t*)(&(INSInt->dataBuffer[i + 62]))) ;
+
+		data->temp_gyro3 = (float)(*(int16_t*)(&(INSInt->dataBuffer[i + 64]))) ;
+
+		data->temp_acc1 = (float)(*(int16_t*)(&(INSInt->dataBuffer[i + 66]))) ;
+
+		data->temp_acc2 = (float)(*(int16_t*)(&(INSInt->dataBuffer[i + 68]))) ;
+
+		data->temp_acc3 = (float)(*(int16_t*)(&(INSInt->dataBuffer[i + 70]))) ;
+
+		data->temp_mag1 = (float)(*(int16_t*)(&(INSInt->dataBuffer[i + 72]))) ;
+
+		data->temp_mag2 = (float)(*(int16_t*)(&(INSInt->dataBuffer[i + 74]))) ;
+
+		data->temp_mag3 = (float)(*(int16_t*)(&(INSInt->dataBuffer[i + 76]))) ;
+
+		data->Latitude = (double)(*(int64_t*)(&(INSInt->dataBuffer[i + 78]))) ;
+
+		data->Longitude = (double)(*(int64_t*)(&(INSInt->dataBuffer[i + 86]))) ;
+
+		data->Altitude = (double)(*(int64_t*)(&(INSInt->dataBuffer[i + 94]))) ;
+
+		data->Velocity_V_east = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 102]))) ;
+
+		data->Velocity_V_north = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 106]))) ;
+
+		data->Velocity_V_up = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 110]))) ;
+
+		data->Velocity_V_up = (double)(*(int64_t*)(&(INSInt->dataBuffer[i + 114]))) ;
+
+
+	}
+
+
+	return ILERR_NO_ERROR;
+}
+
 IL_ERROR_CODE INS_ReadInternalParameters(IL_INS* ins, INSSetInternalData* data)
 {
 
@@ -954,6 +1041,7 @@ void INS_processReceivedPacket(IL_INS* ins, unsigned char buffer[], int num_byte
 {
 	INSInternal* INSInt;
 
+	INSInt->dataBuffer = NULL;
 
 	INSInt = INS_getInternalData(ins);
 
@@ -965,7 +1053,7 @@ void INS_processReceivedPacket(IL_INS* ins, unsigned char buffer[], int num_byte
 #if  IL_RAW_DATA
 	for (int i = 0; i < INSInt->num_bytes_recive; i++)
 	{
-		printf("0x%02x ", INSInt->dataBuffer[i]);
+		printf("0x%02x ", INSInt->dataBuffer[i]);       
 	}
 	printf("\n");
 
