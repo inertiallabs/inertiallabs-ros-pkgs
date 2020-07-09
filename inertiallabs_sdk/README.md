@@ -17,6 +17,8 @@ The SDK is tested on both Linux(Ubuntu 16.04 LTS & 18.04 LTS)  and Windows(Visua
 
 ## Compiling
 
+In examples we only gave a single output format . You can go through the document to see other output format flags and functions .
+
 **For Linux**
 
 The following steps will walk you through adding the Inertial Labs C/C++ Library to your Linux project to access a INS/IMU-P device. You can also find an example usage of the library at imu_linux_basic.c & ins_linux_basic.c .
@@ -31,6 +33,15 @@ $ make
 To include this project to your own make file , have a look at the example make file provied by us in the expample folder ins_linux_basic .
 
 **For Windows**
+
+To test the windows examples in the example folder , you can directly open the project in the Visual Studio directly using the .sln file . Then you can directly build the package and run the tests . You may have to change few parameters in the code to run the example .
+
+```
+/* Change the connection settings to your configuration. */
+const char* COM_PORT = "COM1";
+const int BAUD_RATE = 921600;
+
+```
 
 The following steps will walk you through including the Inertial Labs C/C++ Library into your existing C or C++ project to access a INS/IMU-P device. You can also find an example usage of the library at ins_windows_basic.c & imu_windows_basic.c.
 
