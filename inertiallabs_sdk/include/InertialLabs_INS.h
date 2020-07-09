@@ -94,10 +94,10 @@ extern "C" {
 	 * \brief Holds connection information for accessing a INS device.
 	 */
 	typedef struct {
-		char*	portName;		/**< The name of the serial port. */
+		char* portName;		/**< The name of the serial port. */
 		int		baudRate;		/**< The baudrate of the serial port. */
 		IL_BOOL	isConnected;	/**< Inidicates if the serial port is open. */
-		void*	internalData;	/**< Pointer to data used internally by the INS function handlers. */
+		void* internalData;	/**< Pointer to data used internally by the INS function handlers. */
 		int     mode;           /**< Inidicates the mode of communication (OnrequestMode/Continues). */
 		int 	cmd_flag;       /**< Inidicates the INS command Macros in use.*/
 	}IL_INS;
@@ -187,7 +187,7 @@ extern "C" {
 
 		int       Altitude_one_byte;
 
-		char    *INS_Device_Name;
+		char* INS_Device_Name;
 		int       Baro_Altimeter;
 
 	} INSSetInternalData;
@@ -234,13 +234,13 @@ extern "C" {
 		float     Velocity_V_east;
 		float 	  Velocity_V_north;
 		float     Velocity_V_up;
-		double    Gravity_G; 
-		
+		double    Gravity_G;
+
 
 
 	} INSSetInitialData;
 
-	
+
 	/**
 	 * \brief Read SPAN rawimu command Data structure of the various  data the INS device
 	 * is capable of outputting.
@@ -262,7 +262,7 @@ extern "C" {
 		double 		imu_status;
 
 		IlVector3	acceleration;
-		IlVector3	gyro; 
+		IlVector3	gyro;
 
 
 
@@ -664,7 +664,7 @@ extern "C" {
 	 * \return InertialLab error code.
 	 */
 
-	DLL_EXPORT IL_ERROR_CODE INS_GNSS_Details(IL_INS* ins , INSGnssData* data);
+	DLL_EXPORT IL_ERROR_CODE INS_GNSS_Details(IL_INS* ins, INSGnssData* data);
 
 	/**
 	 * \brief Gets the  Quaternion value of orientation  Measurements .

@@ -36,6 +36,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <math.h>
 #include <stdint.h>
 #include "InertialLabs_INS.h"
 #include "IL_errorCodes.h"
@@ -123,7 +124,7 @@ typedef struct {
 	 */
 	char					cmdResponseBuffer[IL_MAX_RESPONSE_SIZE + 1];
 
-	unsigned char*       	dataBuffer;
+	unsigned char* dataBuffer;
 	//unsigned char           dataBuffer[READ_BUFFER_SIZE];
 	int 			        cmdResponseSize;
 
@@ -416,7 +417,7 @@ IL_ERROR_CODE INS_readData_threadSafe(IL_INS* ins, unsigned char dataBuffer[], u
 			(ins->cmd_flag == IL_SENSOR_DATA_RECEIVE && *numOfBytesActuallyRead == (int)IL_SENSOR_DATA_CMD_RECEIVE_SIZE) ||
 			(ins->cmd_flag == IL_OPVT_RAWIMU_DATA_RECEIVE && *numOfBytesActuallyRead == (int)IL_OPVT_RAWIMU_DATA_CMD_RECEIVE_SIZE) ||
 			(ins->cmd_flag == IL_OPVT_GNSSEXT_DATA_RECEIVE && *numOfBytesActuallyRead == (int)IL_OPVT_GNSSEXT_DATA_CMD_RECEIVE_SIZE) ||
-			(ins->cmd_flag == IL_SPAN_RAWIMU_RECEIVE && *numOfBytesActuallyRead == (int)IL_SPAN_RAWIMU_CMD_RECEIVE_SIZE) )
+			(ins->cmd_flag == IL_SPAN_RAWIMU_RECEIVE && *numOfBytesActuallyRead == (int)IL_SPAN_RAWIMU_CMD_RECEIVE_SIZE))
 		{
 			return ILERR_NO_ERROR;
 		}
@@ -543,8 +544,8 @@ void* INS_communicationHandler(void* INSobj)
 						}
 						/* See if we have even found the start of a response. */
 
-						if (((int)readBuffer[curResponsePos] == 170) && ((int)readBuffer[curResponsePos + 1] == 85)){
-												
+						if (((int)readBuffer[curResponsePos] == 170) && ((int)readBuffer[curResponsePos + 1] == 85)) {
+
 #if IL_DBG
 							printf(" found the start byte \n");
 							for (int i = 0; i < numOfBytesRead; i++)
@@ -558,16 +559,16 @@ void* INS_communicationHandler(void* INSobj)
 							haveFoundStartOfCommand = IL_TRUE;
 							responseBuilderBufferPos = 0;
 
-							if((int)(readBuffer[curResponsePos + 4]) == 134 ||
-							  (int)(readBuffer[curResponsePos + 4]) == 56 )
-							  {
-								  printf(" [INFO] Initial Alignment Done !!! \n");
-								  memset(readBuffer, 0x00, sizeof(unsigned char) * READ_BUFFER_SIZE);
-							  }
+							if ((int)(readBuffer[curResponsePos + 4]) == 134 ||
+								(int)(readBuffer[curResponsePos + 4]) == 56)
+							{
+								printf(" [INFO] Initial Alignment Done !!! \n");
+								memset(readBuffer, 0x00, sizeof(unsigned char) * READ_BUFFER_SIZE);
+							}
 
 						}
-						if (((int)readBuffer[curResponsePos] == 170) && ((int)readBuffer[curResponsePos + 1] == 68) && ((int)readBuffer[curResponsePos + 2] == 18) ) {						
-							
+						if (((int)readBuffer[curResponsePos] == 170) && ((int)readBuffer[curResponsePos + 1] == 68) && ((int)readBuffer[curResponsePos + 2] == 18)) {
+
 #if IL_DBG
 							printf(" found the start byte \n");
 							for (int i = 0; i < numOfBytesRead; i++)
@@ -595,7 +596,7 @@ void* INS_communicationHandler(void* INSobj)
 
 						if (responseBuilderBufferPos == INSInt->num_bytes_recive)
 						{
-							
+
 #if IL_DBG							
 							printf(" one packet recive done ins continues mode \n");
 #endif
@@ -613,7 +614,7 @@ void* INS_communicationHandler(void* INSobj)
 
 						}
 					}
-					
+
 				}
 				break;
 			}
@@ -633,10 +634,10 @@ void* INS_communicationHandler(void* INSobj)
 				}
 				else
 				{
-					
+
 				}
-				
-				
+
+
 			}
 			default:
 #if IL_DBG
@@ -659,7 +660,7 @@ IL_BOOL INS_verifyConnectivity(IL_INS* ins)
 	//TODO 
 	return true;
 }
-void textFromHexString(char *hex, char *result)
+void textFromHexString(char* hex, char* result)
 {
 	char text[25] = { 0 };
 	int tc = 0;
@@ -685,9 +686,9 @@ IL_ERROR_CODE INS_ReadRawImuParameters(IL_INS* ins, INSRawImuData* data)
 {
 	int i = 7;
 
-    //pow(2,31)
-	double conv_acc = pow(2,31) / 200;
-	double conv_gyro = pow(2,31) / 720;
+	//pow(2,31)
+	double conv_acc = pow(2, 31) / 200;
+	double conv_gyro = pow(2, 31) / 720;
 
 	INSInternal* INSInt;
 	INSInt = INS_getInternalData(ins);
@@ -696,13 +697,13 @@ IL_ERROR_CODE INS_ReadRawImuParameters(IL_INS* ins, INSRawImuData* data)
 
 	data->message_length = (int)(*(uint16_t*)(&(INSInt->dataBuffer[i + 1])));
 
-	data->sequence = (int)(*(uint16_t*)(&(INSInt->dataBuffer[i + 3]))) ;
+	data->sequence = (int)(*(uint16_t*)(&(INSInt->dataBuffer[i + 3])));
 
-	data->idle_time = (int)(*(uint8_t*)(&(INSInt->dataBuffer[i + 5]))) ;
+	data->idle_time = (int)(*(uint8_t*)(&(INSInt->dataBuffer[i + 5])));
 
 	data->time_status = (int)(*(uint8_t*)(&(INSInt->dataBuffer[i + 6])));
 
-	data->week = (double)(*(uint16_t*)(&(INSInt->dataBuffer[i + 7]))) ;
+	data->week = (double)(*(uint16_t*)(&(INSInt->dataBuffer[i + 7])));
 
 	data->gps_time = (double)(*(uint32_t*)(&(INSInt->dataBuffer[i + 9])));
 
@@ -716,36 +717,36 @@ IL_ERROR_CODE INS_ReadRawImuParameters(IL_INS* ins, INSRawImuData* data)
 
 	data->imu_status = (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 33])));
 
-	data->acceleration.c2 =  (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 37]))) / conv_acc;
+	data->acceleration.c2 = (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 37]))) / conv_acc;
 
-	data->acceleration.c1 =  - ((double)(*(int32_t*)(&(INSInt->dataBuffer[i + 41]))) /conv_acc);
+	data->acceleration.c1 = -((double)(*(int32_t*)(&(INSInt->dataBuffer[i + 41]))) / conv_acc);
 
-	data->acceleration.c0 =  (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 45]))) / conv_acc;
+	data->acceleration.c0 = (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 45]))) / conv_acc;
 
-	data->gyro.c2 =  (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 49]))) / conv_gyro;
+	data->gyro.c2 = (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 49]))) / conv_gyro;
 
-	data->gyro.c1 = - ( (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 53]))) / conv_gyro);
+	data->gyro.c1 = -((double)(*(int32_t*)(&(INSInt->dataBuffer[i + 53]))) / conv_gyro);
 
-	data->gyro.c0 =  (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 57]))) /conv_gyro ; 
+	data->gyro.c0 = (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 57]))) / conv_gyro;
 
 	printf("\nPort Address:  %d\n", data->port_address);
 
 	printf("\nMessage Length: %d\n", data->message_length);
 
-	printf("\n Sequence :  %d\n",data->sequence);
+	printf("\n Sequence :  %d\n", data->sequence);
 
-	printf("\nTime Status: %d\n",data->time_status);
+	printf("\nTime Status: %d\n", data->time_status);
 
-		
-	printf("\nWeek: %f\n",data->week);
 
-	printf("\nGPS Time: %f\n",data->gps_time);
+	printf("\nWeek: %f\n", data->week);
 
-	printf("\nReceiver Status: %f\n",data->receiver_status);
+	printf("\nGPS Time: %f\n", data->gps_time);
 
-	printf("\nReceiver S/W Version: %f\n",data->receiver_sw_version);
+	printf("\nReceiver Status: %f\n", data->receiver_status);
 
-	printf("\nWeek (4 byte unsigned integer): %f\n",data->week_4byte);
+	printf("\nReceiver S/W Version: %f\n", data->receiver_sw_version);
+
+	printf("\nWeek (4 byte unsigned integer): %f\n", data->week_4byte);
 
 
 	printf(
@@ -753,18 +754,18 @@ IL_ERROR_CODE INS_ReadRawImuParameters(IL_INS* ins, INSRawImuData* data)
 		"   AccX  :%f\n"
 		"   AccY  :%f\n"
 		"  	AccZ  :%f\n",
-		data->acceleration.c0 ,
-		data->acceleration.c1 ,
-		data->acceleration.c2 );
+		data->acceleration.c0,
+		data->acceleration.c1,
+		data->acceleration.c2);
 
 	printf(
 		"\n Gyro : \n"
 		"   GyroX  :%f\n"
 		"   GyroY  :%f\n"
 		"  	GyroZ  :%f\n",
-		data->gyro.c0 ,
-		data->gyro.c1 ,
-		data->gyro.c2 );
+		data->gyro.c0,
+		data->gyro.c1,
+		data->gyro.c2);
 
 #ifdef IL_DECODE_DATA
 
@@ -801,9 +802,9 @@ IL_ERROR_CODE INS_ReadRawImuParameters(IL_INS* ins, INSRawImuData* data)
 	case 180:
 		printf("Time is fine set and is being steered");
 		break;
-	
+
 	default:
-		printf("check your data once its not in the range!!!! : %d",data->time_status);
+		printf("check your data once its not in the range!!!! : %d", data->time_status);
 		break;
 	}
 
@@ -829,64 +830,64 @@ IL_ERROR_CODE INS_Alignment(IL_INS* ins, INSSetInitialData* data)
 
 	data->Gyros_bias2 = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 6])));
 
-	data->Gyros_bias3 = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 10]))) ;
+	data->Gyros_bias3 = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 10])));
 
-	data->Average_acceleration1 = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 14]))) ;
+	data->Average_acceleration1 = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 14])));
 
-	data->Average_acceleration2 = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 18]))) ;
+	data->Average_acceleration2 = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 18])));
 
-	data->Average_acceleration3 = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 22]))) ;
+	data->Average_acceleration3 = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 22])));
 
 	data->Average_magnfield1 = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 26])));
 
-	data->Average_magnfield2 = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 30]))) ;
+	data->Average_magnfield2 = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 30])));
 
-	data->Average_magnfield3 = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 34]))) ;
+	data->Average_magnfield3 = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 34])));
 
-	data->Initial_Heading = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 38]))) ;
+	data->Initial_Heading = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 38])));
 
-	data->Initial_Roll = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 42]))) ;
+	data->Initial_Roll = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 42])));
 
-	data->Initial_Pitch = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 46]))) ;
+	data->Initial_Pitch = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 46])));
 
 
-	if(data_size == 128)
+	if (data_size == 128)
 	{
 		data->temp_pressure_sensor = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 52])));
 
-		data->pressure_data = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 56]))) ;
+		data->pressure_data = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 56])));
 
-		data->temp_gyro1 = (float)(*(int16_t*)(&(INSInt->dataBuffer[i + 60]))) ;
+		data->temp_gyro1 = (float)(*(int16_t*)(&(INSInt->dataBuffer[i + 60])));
 
-		data->temp_gyro2 = (float)(*(int16_t*)(&(INSInt->dataBuffer[i + 62]))) ;
+		data->temp_gyro2 = (float)(*(int16_t*)(&(INSInt->dataBuffer[i + 62])));
 
-		data->temp_gyro3 = (float)(*(int16_t*)(&(INSInt->dataBuffer[i + 64]))) ;
+		data->temp_gyro3 = (float)(*(int16_t*)(&(INSInt->dataBuffer[i + 64])));
 
-		data->temp_acc1 = (float)(*(int16_t*)(&(INSInt->dataBuffer[i + 66]))) ;
+		data->temp_acc1 = (float)(*(int16_t*)(&(INSInt->dataBuffer[i + 66])));
 
-		data->temp_acc2 = (float)(*(int16_t*)(&(INSInt->dataBuffer[i + 68]))) ;
+		data->temp_acc2 = (float)(*(int16_t*)(&(INSInt->dataBuffer[i + 68])));
 
-		data->temp_acc3 = (float)(*(int16_t*)(&(INSInt->dataBuffer[i + 70]))) ;
+		data->temp_acc3 = (float)(*(int16_t*)(&(INSInt->dataBuffer[i + 70])));
 
-		data->temp_mag1 = (float)(*(int16_t*)(&(INSInt->dataBuffer[i + 72]))) ;
+		data->temp_mag1 = (float)(*(int16_t*)(&(INSInt->dataBuffer[i + 72])));
 
-		data->temp_mag2 = (float)(*(int16_t*)(&(INSInt->dataBuffer[i + 74]))) ;
+		data->temp_mag2 = (float)(*(int16_t*)(&(INSInt->dataBuffer[i + 74])));
 
-		data->temp_mag3 = (float)(*(int16_t*)(&(INSInt->dataBuffer[i + 76]))) ;
+		data->temp_mag3 = (float)(*(int16_t*)(&(INSInt->dataBuffer[i + 76])));
 
-		data->Latitude = (double)(*(int64_t*)(&(INSInt->dataBuffer[i + 78]))) ;
+		data->Latitude = (double)(*(int64_t*)(&(INSInt->dataBuffer[i + 78])));
 
-		data->Longitude = (double)(*(int64_t*)(&(INSInt->dataBuffer[i + 86]))) ;
+		data->Longitude = (double)(*(int64_t*)(&(INSInt->dataBuffer[i + 86])));
 
-		data->Altitude = (double)(*(int64_t*)(&(INSInt->dataBuffer[i + 94]))) ;
+		data->Altitude = (double)(*(int64_t*)(&(INSInt->dataBuffer[i + 94])));
 
-		data->Velocity_V_east = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 102]))) ;
+		data->Velocity_V_east = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 102])));
 
-		data->Velocity_V_north = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 106]))) ;
+		data->Velocity_V_north = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 106])));
 
-		data->Velocity_V_up = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 110]))) ;
+		data->Velocity_V_up = (float)(*(int32_t*)(&(INSInt->dataBuffer[i + 110])));
 
-		data->Velocity_V_up = (double)(*(int64_t*)(&(INSInt->dataBuffer[i + 114]))) ;
+		data->Velocity_V_up = (double)(*(int64_t*)(&(INSInt->dataBuffer[i + 114])));
 
 
 	}
@@ -1011,7 +1012,7 @@ INSInternal* INS_getInternalData(IL_INS* ins)
 	return (INSInternal*)ins->internalData;
 }
 
-IL_ERROR_CODE INS_transaction(IL_INS* ins, unsigned char *cmdToSend, int responseMatch)
+IL_ERROR_CODE INS_transaction(IL_INS* ins, unsigned char* cmdToSend, int responseMatch)
 {
 	INSInternal* INSInt;
 
@@ -1056,7 +1057,7 @@ void INS_processReceivedPacket(IL_INS* ins, unsigned char buffer[], int num_byte
 #if  IL_RAW_DATA
 	for (int i = 0; i < INSInt->num_bytes_recive; i++)
 	{
-		printf("0x%02x ", INSInt->dataBuffer[i]);       
+		printf("0x%02x ", INSInt->dataBuffer[i]);
 	}
 	printf("\n");
 
@@ -1198,18 +1199,18 @@ IL_ERROR_CODE INS_getGyroAccMag(IL_INS* ins, INSCompositeData* data)
 
 		if (ins->cmd_flag == IL_SENSOR_DATA_RECEIVE)
 		{
-			i = i+12;
-			data->Vinp = (double)(*(uint16_t*)(&(INSInt->dataBuffer[i + 0]))) ;
-			data->Temper = (double)(*(int16_t*)(&(INSInt->dataBuffer[i + 2]))) ;
+			i = i + 12;
+			data->Vinp = (double)(*(uint16_t*)(&(INSInt->dataBuffer[i + 0])));
+			data->Temper = (double)(*(int16_t*)(&(INSInt->dataBuffer[i + 2])));
 		}
 		else
 		{
-			i =  i + 8;
+			i = i + 8;
 
 			data->Vinp = (double)(*(uint16_t*)(&(INSInt->dataBuffer[i + 0]))) / 100;
 			data->Temper = (double)(*(int16_t*)(&(INSInt->dataBuffer[i + 2]))) / 10;
 		}
-		
+
 
 		errorCode = ILERR_NO_ERROR;
 		break;
@@ -1377,15 +1378,15 @@ IL_ERROR_CODE INS_getPositionData(IL_INS* ins, INSPositionData* data)
 		data->GNSS_Altitude = (double)(*(int32_t*)(&(INSInt->dataBuffer[j + 8]))) / m_conv;
 
 		j = 52;
-		data->Latitude = (double)(*(uint16_t*)(&(INSInt->dataBuffer[j + 0]))) /1000;
-		data->Longitude = (double)(*(uint16_t*)(&(INSInt->dataBuffer[j + 2]))) /1000;
-		data->Altitude = (double)(*(uint16_t*)(&(INSInt->dataBuffer[j + 4]))) /1000;
+		data->Latitude = (double)(*(uint16_t*)(&(INSInt->dataBuffer[j + 0]))) / 1000;
+		data->Longitude = (double)(*(uint16_t*)(&(INSInt->dataBuffer[j + 2]))) / 1000;
+		data->Altitude = (double)(*(uint16_t*)(&(INSInt->dataBuffer[j + 4]))) / 1000;
 
 		j = 58;
 		data->GNSS_Horizontal_Speed = (double)(*(int32_t*)(&(INSInt->dataBuffer[j + 0]))) / m_conv;
 		data->GNSS_Trackover_Ground = (double)(*(uint16_t*)(&(INSInt->dataBuffer[j + 4]))) / m_conv;
 		data->GNSS_Vertical_Speed = (double)(*(int32_t*)(&(INSInt->dataBuffer[j + 6]))) / m_conv;
-		
+
 		errorCode = ILERR_NO_ERROR;
 		break;
 
@@ -1395,7 +1396,7 @@ IL_ERROR_CODE INS_getPositionData(IL_INS* ins, INSPositionData* data)
 		i = 18;
 		data->Latitude = (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 0]))) / deg_conv;
 		data->Longitude = (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 4]))) / deg_conv;
-		data->Altitude = (double)( *(int32_t*)(&(INSInt->dataBuffer[i+8])) ) / m_conv;
+		data->Altitude = (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 8]))) / m_conv;
 		data->East_Speed = (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 12]))) / m_conv;
 		data->North_Speed = (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 16]))) / m_conv;
 		data->Vertical_Speed = (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 20]))) / m_conv;
@@ -1409,7 +1410,7 @@ IL_ERROR_CODE INS_getPositionData(IL_INS* ins, INSPositionData* data)
 
 		data->Latitude = (double)(*(int64_t*)(&(INSInt->dataBuffer[i + 0]))) / deg_conv_8byte;
 		data->Longitude = (double)(*(int64_t*)(&(INSInt->dataBuffer[i + 8]))) / deg_conv_8byte;
-		data->Altitude = (double)( *(int32_t*)(&(INSInt->dataBuffer[i+16])) ) / 1000;
+		data->Altitude = (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 16]))) / 1000;
 		data->East_Speed = (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 20]))) / 1000000;
 		data->North_Speed = (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 24]))) / 1000000;
 		data->Vertical_Speed = (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 28]))) / 1000000;
@@ -1433,7 +1434,7 @@ IL_ERROR_CODE INS_getPositionData(IL_INS* ins, INSPositionData* data)
 
 		data->Latitude = (double)(*(int64_t*)(&(INSInt->dataBuffer[i + 0]))) / deg_conv_8byte;
 		data->Longitude = (double)(*(int64_t*)(&(INSInt->dataBuffer[i + 8]))) / deg_conv_8byte;
-		data->Altitude = (double)( *(int32_t*)(&(INSInt->dataBuffer[i+16])) ) / 1000;
+		data->Altitude = (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 16]))) / 1000;
 		data->East_Speed = (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 20]))) / m_conv;
 		data->North_Speed = (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 24]))) / m_conv;
 		data->Vertical_Speed = (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 28]))) / m_conv;
@@ -1629,10 +1630,10 @@ IL_ERROR_CODE INS_getLatencyData(IL_INS* ins, INSPositionData* data)
 	return ILERR_NO_ERROR;
 }
 
-IL_ERROR_CODE INS_GNSS_Details(IL_INS* ins , INSGnssData* data)
+IL_ERROR_CODE INS_GNSS_Details(IL_INS* ins, INSGnssData* data)
 {
 
-// only for sensor data format
+	// only for sensor data format
 	IL_ERROR_CODE errorCode;
 	int i;
 	int gnss_conv = 100;
@@ -1649,7 +1650,7 @@ IL_ERROR_CODE INS_GNSS_Details(IL_INS* ins , INSGnssData* data)
 	{
 		int sol_stat = (int)(*(int8_t*)(&(INSInt->dataBuffer[74])));
 
-		data->sol_stat = sol_stat ;
+		data->sol_stat = sol_stat;
 
 		switch (sol_stat)
 		{
@@ -1698,14 +1699,14 @@ IL_ERROR_CODE INS_GNSS_Details(IL_INS* ins , INSGnssData* data)
 
 
 		default:
-			printf("check the data once , its not in the range !!!! data: %d" , sol_stat);
+			printf("check the data once , its not in the range !!!! data: %d", sol_stat);
 			break;
 		}
 
 		int pos_type = (int)(*(int8_t*)(&(INSInt->dataBuffer[75])));
 
 		data->pos_type = pos_type;
-		
+
 		switch (pos_type)
 		{
 		case 0:
@@ -1764,7 +1765,7 @@ IL_ERROR_CODE INS_GNSS_Details(IL_INS* ins , INSGnssData* data)
 			break;
 
 		default:
-			printf("check the data once , its not in the range !!!! data: %d" , pos_type);
+			printf("check the data once , its not in the range !!!! data: %d", pos_type);
 			break;
 		}
 		errorCode = ILERR_NO_ERROR;
@@ -2240,53 +2241,53 @@ void INS_Recive_size(IL_INS* ins)
 # endif
 	switch (ins->cmd_flag)
 	{
-		case IL_STOP_CMD:
-			INSInt->num_bytes_recive = IL_STOP_CMD_RECEIVE_SIZE;
-			break;
-		case IL_SET_ONREQUEST_CMD:
-			INSInt->num_bytes_recive = IL_SET_ONREQUEST_CMD_RECEIVE_SIZE;
-			break;
-		case IL_OPVT_RECEIVE:
-			INSInt->num_bytes_recive = IL_OPVT_CMD_RECEIVE_SIZE;
-			break;
-		case IL_QPVT_RECEIVE:
-			INSInt->num_bytes_recive = IL_QPVT_CMD_RECEIVE_SIZE;
-			break;
-		case IL_OPVT2A_RECEIVE:
-			INSInt->num_bytes_recive = IL_OPVT2A_CMD_RECEIVE_SIZE;
-			break;
-		case IL_OPVT2AW_RECEIVE:
-			INSInt->num_bytes_recive = IL_OPVT2AW_CMD_RECEIVE_SIZE;
-			break;
-		case IL_OPVT2AHR_RECEIVE:
-			INSInt->num_bytes_recive = IL_OPVT2AHR_CMD_RECEIVE_SIZE;
-			break;
-		case IL_OPVTAD_RECEIVE:
-			INSInt->num_bytes_recive = IL_OPVTAD_CMD_RECEIVE_SIZE;
-			break;
-		case IL_MINIMAL_DATA_RECEIVE:
-			INSInt->num_bytes_recive = IL_MINIMAL_DATA_CMD_RECEIVE_SIZE;
-			break;
-		case IL_DEV_SELF_TEST_RECEIVE:
-			INSInt->num_bytes_recive = IL_DEV_SELF_TEST_CMD_RECEIVE_SIZE;
-			break;
-		case IL_READ_INS_PAR_RECEIVE:
-			INSInt->num_bytes_recive = IL_READ_INS_PAR_CMD_RECEIVE_SIZE;
-			break;
-		case IL_LOAD_INS_PAR_RECEIVE:
-			INSInt->num_bytes_recive = IL_LOAD_INS_PAR_CMD_RECEIVE_SIZE;
-			break;
-		case IL_SENSOR_DATA_RECEIVE:
-			INSInt->num_bytes_recive = IL_SENSOR_DATA_CMD_RECEIVE_SIZE;
-			break;	
-		case IL_OPVT_RAWIMU_DATA_RECEIVE:
-			INSInt->num_bytes_recive = IL_OPVT_RAWIMU_DATA_CMD_RECEIVE_SIZE;
-			break;
-		case IL_OPVT_GNSSEXT_DATA_RECEIVE:
-			INSInt->num_bytes_recive = IL_OPVT_GNSSEXT_DATA_CMD_RECEIVE_SIZE;
-			break;
-		default:
-			break;
+	case IL_STOP_CMD:
+		INSInt->num_bytes_recive = IL_STOP_CMD_RECEIVE_SIZE;
+		break;
+	case IL_SET_ONREQUEST_CMD:
+		INSInt->num_bytes_recive = IL_SET_ONREQUEST_CMD_RECEIVE_SIZE;
+		break;
+	case IL_OPVT_RECEIVE:
+		INSInt->num_bytes_recive = IL_OPVT_CMD_RECEIVE_SIZE;
+		break;
+	case IL_QPVT_RECEIVE:
+		INSInt->num_bytes_recive = IL_QPVT_CMD_RECEIVE_SIZE;
+		break;
+	case IL_OPVT2A_RECEIVE:
+		INSInt->num_bytes_recive = IL_OPVT2A_CMD_RECEIVE_SIZE;
+		break;
+	case IL_OPVT2AW_RECEIVE:
+		INSInt->num_bytes_recive = IL_OPVT2AW_CMD_RECEIVE_SIZE;
+		break;
+	case IL_OPVT2AHR_RECEIVE:
+		INSInt->num_bytes_recive = IL_OPVT2AHR_CMD_RECEIVE_SIZE;
+		break;
+	case IL_OPVTAD_RECEIVE:
+		INSInt->num_bytes_recive = IL_OPVTAD_CMD_RECEIVE_SIZE;
+		break;
+	case IL_MINIMAL_DATA_RECEIVE:
+		INSInt->num_bytes_recive = IL_MINIMAL_DATA_CMD_RECEIVE_SIZE;
+		break;
+	case IL_DEV_SELF_TEST_RECEIVE:
+		INSInt->num_bytes_recive = IL_DEV_SELF_TEST_CMD_RECEIVE_SIZE;
+		break;
+	case IL_READ_INS_PAR_RECEIVE:
+		INSInt->num_bytes_recive = IL_READ_INS_PAR_CMD_RECEIVE_SIZE;
+		break;
+	case IL_LOAD_INS_PAR_RECEIVE:
+		INSInt->num_bytes_recive = IL_LOAD_INS_PAR_CMD_RECEIVE_SIZE;
+		break;
+	case IL_SENSOR_DATA_RECEIVE:
+		INSInt->num_bytes_recive = IL_SENSOR_DATA_CMD_RECEIVE_SIZE;
+		break;
+	case IL_OPVT_RAWIMU_DATA_RECEIVE:
+		INSInt->num_bytes_recive = IL_OPVT_RAWIMU_DATA_CMD_RECEIVE_SIZE;
+		break;
+	case IL_OPVT_GNSSEXT_DATA_RECEIVE:
+		INSInt->num_bytes_recive = IL_OPVT_GNSSEXT_DATA_CMD_RECEIVE_SIZE;
+		break;
+	default:
+		break;
 	}
 }
 
