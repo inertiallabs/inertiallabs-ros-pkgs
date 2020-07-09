@@ -10,7 +10,7 @@
 
 int IL_getErrorCode();
 
-#define IL_DBG 0                   /**< SDK Debug mode off. */
+#define IL_DBG 1                   /**< SDK Debug mode off. */
 #define IL_RAW_DATA 0
 #define IL_DECODE_DATA 0
 #endif /* _IL_COMMON_H_ */

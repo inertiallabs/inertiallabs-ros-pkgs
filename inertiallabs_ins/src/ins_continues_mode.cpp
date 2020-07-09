@@ -290,7 +290,7 @@ int main(int argc,char** argv)
 	np.param<int>("publish_rate",publish_rate,100);
 	np.param<int>("async_output_type",async_output_type,0);
 	np.param<int>("async_output_rate",async_output_rate,6);
-	np.param<int>("ins_output_format",ins_output_format,IL_OPVT_RECEIVE);
+	np.param<int>("ins_output_format",ins_output_format,IL_USERDEF_DATA_RECEIVE);
 
 	//Initializing Publishers
 
@@ -399,7 +399,9 @@ int main(int argc,char** argv)
 		case IL_NMEA_SENSORS_RECEIVE:
 			il_err = INS_Sensors_NMEA_Receive(&ins);
 			break;
-
+		case IL_USERDEF_DATA_RECEIVE:
+			il_err = UserDef_Data_Receive(&ins);
+			break;
 		default:
 			ROS_INFO("this output data format is not supported by this INS");
 			break;

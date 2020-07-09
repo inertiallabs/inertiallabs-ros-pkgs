@@ -112,6 +112,10 @@ void publish_device()
 		case IL_NMEA_SENSORS_RECEIVE:
 			il_error = INS_Sensors_NMEA_Receive(&ins);
 			break;
+
+		case IL_USERDEF_DATA_RECEIVE:
+			il_error = UserDef_Data_Receive(&ins);
+			break;
 		
 		default:
 			ROS_INFO("this output data format is not supported by this INS");
@@ -294,11 +298,11 @@ int main(int argc,char** argv)
 
 	int baudrate,publish_rate,async_output_rate,async_output_type;
 	np.param<std::string>("serial_port",port,"/dev/ttyUSB0");
-	np.param<int>("serial_baud",baudrate,115200);
+	np.param<int>("serial_baud",baudrate,460800);
 	np.param<int>("publish_rate",publish_rate,10);
 	np.param<int>("async_output_type",async_output_type,0);
 	np.param<int>("async_output_rate",async_output_rate,6);
-	np.param<int>("ins_output_format",ins_output_format,IL_OPVT_RECEIVE);
+	np.param<int>("ins_output_format",ins_output_format,IL_USERDEF_DATA_RECEIVE);
 
 	//Initializing Publishers
 
@@ -349,6 +353,8 @@ int main(int argc,char** argv)
 	}
 
 	ROS_INFO("stoped here ");
+
+	
 	/*
 	 * \brief Set the data output mode of the INS.
 	 */
@@ -366,9 +372,11 @@ int main(int argc,char** argv)
 	if(ins.mode)
 	{
 		ROS_INFO("On Request mode calibaration running ");
-		ros::Duration(40).sleep();
+		ros::Duration(20).sleep();
 	}
-
+    // ins.cmd_flag = IL_USERDEF_DATA_RECEIVE;
+	// UserDef_Data_Receive(&ins);
+	// ros::Duration(4).sleep();
 
 	 //DataListener();
 

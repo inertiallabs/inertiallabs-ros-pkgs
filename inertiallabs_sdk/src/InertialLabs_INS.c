@@ -492,9 +492,9 @@ void* INS_communicationHandler(void* INSobj)
 				printf("0x%02x  ", readBuffer[i]);
 			}
 			printf("\n");
-			printf("numOfBytesRead %d : \n", numOfBytesRead);
-			printf("number of bytes to recive : %d \n", INSInt->num_bytes_recive);
-			printf(" cmd_flag : %d \n", ins->cmd_flag);
+			///printf("numOfBytesRead %d : \n", numOfBytesRead);
+			//printf("number of bytes to recive : %d \n", INSInt->num_bytes_recive);
+			//printf(" cmd_flag : %d \n", ins->cmd_flag);
 #endif 
 
 			switch (ins->cmd_flag)
@@ -522,6 +522,7 @@ void* INS_communicationHandler(void* INSobj)
 			case IL_SENSOR_DATA_RECEIVE:
 			case IL_OPVT_GNSSEXT_DATA_RECEIVE:
 			case IL_SPAN_RAWIMU_RECEIVE:
+			case IL_USERDEF_DATA_RECEIVE:
 			{
 				//printf("cmd_flag value : %d \n" , ins->cmd_flag);
 				if (ins->mode)
@@ -2284,6 +2285,9 @@ void INS_Recive_size(IL_INS* ins)
 			break;
 		case IL_OPVT_GNSSEXT_DATA_RECEIVE:
 			INSInt->num_bytes_recive = IL_OPVT_GNSSEXT_DATA_CMD_RECEIVE_SIZE;
+			break;
+		case IL_USERDEF_DATA_RECEIVE:
+			INSInt->num_bytes_recive = IL_USERDEF_DATA_CMD_RECEIVE_SIZE;
 			break;
 		default:
 			break;

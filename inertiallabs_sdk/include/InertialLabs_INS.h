@@ -86,7 +86,7 @@ extern "C" {
 #define IL_NMEA_SENSORS_CMD_RECEIVE_SIZE		00        /**< After INS NMEA Sensors  command no of bytes need to receive. */
 #define IL_OPVT_RAWIMU_DATA_CMD_RECEIVE_SIZE    98        /**< After INS OPVT & Raw IMU data command no of bytes need to receive. */
 #define IL_OPVT_GNSSEXT_DATA_CMD_RECEIVE_SIZE	194       /**< After INS OPVT GNSSext data command no of bytes need to receive. */
-#define IL_USERDEF_DATA_CMD_RECEIVE_SIZE        00        /**< After User Defined Data command no of bytes need to receive. */
+#define IL_USERDEF_DATA_CMD_RECEIVE_SIZE        200        /**< After User Defined Data command no of bytes need to receive. */ // this is a temp fix I will update it with config 
 #define IL_SPAN_RAWIMU_CMD_RECEIVE_SIZE         72        /**< After SPAN rawimu command no of bytes need to receive. */
 #define IL_INITIAL_ALIGNMENT_SHORT_SIZE			58		  /**< Initial alignment short bytes need to receive. */	
 #define IL_INITIAL_ALIGNMENT_EXTENDED_SIZE 		136		  /**< initial alignment extended bytes need to receive. */	
@@ -714,6 +714,8 @@ extern "C" {
 	 */
 	DLL_EXPORT IL_ERROR_CODE INS_LoadINSpar(IL_INS* ins);
 
+
+	DLL_EXPORT IL_ERROR_CODE UserDef_Data_Receive(IL_INS* ins);
 
 	DLL_EXPORT IL_ERROR_CODE INS_Alignment(IL_INS* ins, INSSetInitialData* data);
 
