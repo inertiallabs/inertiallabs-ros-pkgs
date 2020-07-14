@@ -1166,52 +1166,53 @@ IL_ERROR_CODE UDD_Decode(IL_INS* ins ,int data_type, int start_position)
 	switch (data_type)
 	{
 	case 1:
-		double GPS_INS_Time_round  = (double)(*(uint32_t*)(&(INSInt->dataBuffer[start_position ])));
-		printf("GPS_INS_Time_round : %ld\n", GPS_INS_Time_round);
+	{
+		double GPS_INS_Time_round  = (double)(*(uint32_t*)(&(INSInt->dataBuffer[start_position])));
+		printf("GPS_INS_Time_round : %f\n", GPS_INS_Time_round);
 		break;
-
+	}
 	case 2:
-		double GPS_INS_Time  = (double)(*(uint64_t*)(&(INSInt->dataBuffer[start_position ])));
-		printf("GPS_INS_Time : %ld\n", GPS_INS_Time);
+	{
+		double GPS_INS_Time  = (double)(*(uint64_t*)(&(INSInt->dataBuffer[start_position])));
+		printf("GPS_INS_Time : %f\n", GPS_INS_Time);
 		break;
-	
+	}
 	case 3:
-		double GPS_IMU_Time  = (double)(*(uint64_t*)(&(INSInt->dataBuffer[start_position ])));
-		printf("GPS_IMU_Time : %ld\n", GPS_IMU_Time);
+	{
+		double GPS_IMU_Time  = (double)(*(uint64_t*)(&(INSInt->dataBuffer[start_position])));
+		printf("GPS_IMU_Time : %f\n", GPS_IMU_Time);
 		break;
+	}
 	case 7:
-		INS_YPR(&ins , &data);
+		INS_YPR(ins , &data);
 		break;
 
 	case 16:
-		INS_PositionData(&ins,&sensor_data);
+		INS_PositionData(ins,&sensor_data);
 		break;
 
 	case 18:
-		INS_VelocityData(&ins,&sensor_data);
+		INS_VelocityData(ins,&sensor_data);
 		break;
 
 	case 32:
-		INS_getGyro(&ins , &data);
+		INS_getGyro(ins , &data);
 		break;
 	case 34:
-		INS_getAcc(&ins , &data);
+		INS_getAcc(ins , &data);
 		break;
 	case 36:
-		INS_getMag(&ins , &data);
+		INS_getMag(ins , &data);
 		break;
 	
 	case 48:
-		INS_GNSSPositionData(&ins ,&sensor_data);
+		INS_GNSSPositionData(ins ,&sensor_data);
 		break;
 	
 	case 50:
-		INS_GNSSVelocityData(&ins , &sensor_data);
+		INS_GNSSVelocityData(ins , &sensor_data);
 		break;
 
-
-	
-	
 	default:
 		break;
 	}
@@ -1235,9 +1236,9 @@ IL_ERROR_CODE INS_UDD(IL_INS* ins)
 	for(int j=0 ; j < INSInt->user_defined_data_number;j++ )
 	{
 		int cmd_value = (int)(*(uint8_t*)(&(INSInt->dataBuffer[k + j])));
-		printf("cmd_value  : - " , cmd_value);
+		printf("cmd_value  : %d \n" , cmd_value);
 		// 
-		UDD_Decode( &ins, cmd_value , k + INSInt->user_defined_data_number + prev_cmd_value_size  );
+		UDD_Decode( ins, cmd_value , k + INSInt->user_defined_data_number + prev_cmd_value_size  );
 
 		prev_cmd_value_size = prev_cmd_value_size + udd_size_aaray[cmd_value];
 	}
@@ -1339,14 +1340,14 @@ IL_ERROR_CODE INS_getGyro(IL_INS* ins, INSCompositeData* data)
 	switch (ins->cmd_flag)
 	{
 	case IL_USERDEF_DATA_RECEIVE:
-
+	{
 		i = INSInt->user_defined_start_position;
 		data->gyro.c0 = (double)(*(int16_t*)(&(INSInt->dataBuffer[i + 0]))) / kg;
 		data->gyro.c1 = (double)(*(int16_t*)(&(INSInt->dataBuffer[i + 2]))) / kg;
 		data->gyro.c2 = (double)(*(int16_t*)(&(INSInt->dataBuffer[i + 4]))) / kg;
 
 		break;
-
+	}
 	default:
 		break;
 	}
@@ -1367,14 +1368,14 @@ IL_ERROR_CODE INS_getAcc(IL_INS* ins, INSCompositeData* data)
 	switch (ins->cmd_flag)
 	{
 	case IL_USERDEF_DATA_RECEIVE:
-
+	{
 		i = INSInt->user_defined_start_position;
 		data->acceleration.c0 = (double)(*(int16_t*)(&(INSInt->dataBuffer[i + 0]))) / ka;
 		data->acceleration.c1 = (double)(*(int16_t*)(&(INSInt->dataBuffer[i + 2]))) / ka;
 		data->acceleration.c2 = (double)(*(int16_t*)(&(INSInt->dataBuffer[i + 4]))) / ka;
 
 		break;
-
+	}
 	default:
 		break;
 	}
@@ -1393,7 +1394,7 @@ IL_ERROR_CODE INS_getMag(IL_INS* ins, INSCompositeData* data)
 	switch (ins->cmd_flag)
 	{
 	case IL_USERDEF_DATA_RECEIVE:
-
+	{
 		i = INSInt->user_defined_start_position;
 
 		data->magnetic.c0 = (double)(*(int16_t*)(&(INSInt->dataBuffer[i + 0]))) * 10;
@@ -1401,7 +1402,7 @@ IL_ERROR_CODE INS_getMag(IL_INS* ins, INSCompositeData* data)
 		data->magnetic.c2 = (double)(*(int16_t*)(&(INSInt->dataBuffer[i + 4]))) * 10;
 
 		break;
-
+	}
 	default:
 		break;
 	}
@@ -1423,14 +1424,14 @@ IL_ERROR_CODE INS_PositionData(IL_INS* ins, INSPositionData* data)
 	switch (ins->cmd_flag)
 	{
 	case IL_USERDEF_DATA_RECEIVE:
-
+	{
 		i = INSInt->user_defined_start_position;
 
 		data->Latitude = (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 0]))) / deg_conv;
 		data->Longitude = (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 4]))) / deg_conv;
 		data->Altitude = (double)( *(int32_t*)(&(INSInt->dataBuffer[i+ 8])) ) / m_conv;
 		break;
-
+	}
 	default:
 		break;
 	}	
@@ -1453,14 +1454,14 @@ IL_ERROR_CODE INS_VelocityData(IL_INS* ins, INSPositionData* data)
 	switch (ins->cmd_flag)
 	{
 	case IL_USERDEF_DATA_RECEIVE:
-
+	{
 		i = INSInt->user_defined_start_position;
 
 		data->East_Speed = (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 12]))) / m_conv;
 		data->North_Speed = (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 16]))) / m_conv;
 		data->Vertical_Speed = (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 20]))) / m_conv;
 		break;
-
+	}
 	default:
 		break;
 	}	
@@ -1484,13 +1485,13 @@ IL_ERROR_CODE INS_GNSSPositionData(IL_INS* ins, INSPositionData* data)
 	switch (ins->cmd_flag)
 	{
 	case IL_USERDEF_DATA_RECEIVE:
-
+	{
 		i = INSInt->user_defined_start_position;
 		data->GNSS_Latitude = (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 0]))) / deg_conv;
 		data->GNSS_Longitude = (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 4]))) / deg_conv;
 		data->GNSS_Altitude = (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 8]))) / m_conv;
 		break;
-
+	}
 	default:
 		break;
 	}	
@@ -1513,13 +1514,13 @@ IL_ERROR_CODE INS_GNSSVelocityData(IL_INS* ins, INSPositionData* data)
 	switch (ins->cmd_flag)
 	{
 	case IL_USERDEF_DATA_RECEIVE:
-
+	{
 		i = INSInt->user_defined_start_position;
-		data->GNSS_Horizontal_Speed = (double)(*(int32_t*)(&(INSInt->dataBuffer[j + 12]))) / m_conv;
-		data->GNSS_Trackover_Ground = (double)(*(uint16_t*)(&(INSInt->dataBuffer[j + 16]))) / m_conv;
-		data->GNSS_Vertical_Speed = (double)(*(int32_t*)(&(INSInt->dataBuffer[j + 18]))) / m_conv;
+		data->GNSS_Horizontal_Speed = (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 12]))) / m_conv;
+		data->GNSS_Trackover_Ground = (double)(*(uint16_t*)(&(INSInt->dataBuffer[i+ 16]))) / m_conv;
+		data->GNSS_Vertical_Speed = (double)(*(int32_t*)(&(INSInt->dataBuffer[i + 18]))) / m_conv;
 		break;
-
+	}
 	default:
 		break;
 	}	

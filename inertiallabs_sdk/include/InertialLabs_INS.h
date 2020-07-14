@@ -719,7 +719,13 @@ extern "C" {
 
 	DLL_EXPORT IL_ERROR_CODE INS_Alignment(IL_INS* ins, INSSetInitialData* data);
 
-
+	DLL_EXPORT IL_ERROR_CODE INS_getGyro(IL_INS* ins, INSCompositeData* data);
+	DLL_EXPORT IL_ERROR_CODE INS_getAcc(IL_INS* ins, INSCompositeData* data);
+	DLL_EXPORT IL_ERROR_CODE INS_getMag(IL_INS* ins, INSCompositeData* data);
+	DLL_EXPORT IL_ERROR_CODE INS_PositionData(IL_INS* ins, INSPositionData* data);
+	DLL_EXPORT IL_ERROR_CODE INS_VelocityData(IL_INS* ins, INSPositionData* data);
+	DLL_EXPORT IL_ERROR_CODE INS_GNSSPositionData(IL_INS* ins, INSPositionData* data);
+	DLL_EXPORT IL_ERROR_CODE INS_GNSSVelocityData(IL_INS* ins, INSPositionData* data);
 
 
 	DLL_EXPORT IL_ERROR_CODE INS_ReadInternalParameters(IL_INS* ins, INSSetInternalData* data);
