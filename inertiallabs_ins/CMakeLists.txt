@@ -41,22 +41,32 @@ add_library(InertialLabs_services ../inertiallabs_sdk/src/arch/linux/InertialLab
 target_link_libraries(InertialLabs_services pthread)
 
 
-add_executable(ins_onrequest_mode  src/ins_onrequest_mode.cpp
+#add_executable(ins_onrequest_mode  src/ins_onrequest_mode.cpp
+#                         ../inertiallabs_sdk/src/arch/linux/InertialLabs_services.c
+#                         ../inertiallabs_sdk/src/InertialLabs_INS.c
+#)
+
+#target_link_libraries(InertialLabs_services pthread)
+
+#target_link_libraries(ins_onrequest_mode ${catkin_LIBRARIES} InertialLabs_services InertialLabs_INS )
+
+
+#add_executable(ins_continues_mode  src/ins_continues_mode.cpp
+#                         ../inertiallabs_sdk/src/arch/linux/InertialLabs_services.c
+#                         ../inertiallabs_sdk/src/InertialLabs_INS.c
+#)
+
+#target_link_libraries(InertialLabs_services pthread)
+
+#target_link_libraries(ins_continues_modes ${catkin_LIBRARIES} InertialLabs_services InertialLabs_INS )
+
+add_executable(ins_udd_data  src/ins_udd_datatype.cpp
                          ../inertiallabs_sdk/src/arch/linux/InertialLabs_services.c
                          ../inertiallabs_sdk/src/InertialLabs_INS.c
 )
 
 #target_link_libraries(InertialLabs_services pthread)
 
-target_link_libraries(ins_onrequest_mode ${catkin_LIBRARIES} InertialLabs_services InertialLabs_INS )
+target_link_libraries(ins_udd_data ${catkin_LIBRARIES} InertialLabs_services InertialLabs_INS )
 
-
-add_executable(ins_continues_mode  src/ins_continues_mode.cpp
-                         ../inertiallabs_sdk/src/arch/linux/InertialLabs_services.c
-                         ../inertiallabs_sdk/src/InertialLabs_INS.c
-)
-
-#target_link_libraries(InertialLabs_services pthread)
-
-target_link_libraries(ins_continues_mode ${catkin_LIBRARIES} InertialLabs_services InertialLabs_INS )
 

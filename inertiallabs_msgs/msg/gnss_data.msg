@@ -1,0 +1,17 @@
+float64                  GNSS_Latitude
+float64                  GNSS_Longitude
+float64                  GNSS_Altitude
+float32                  GNSS_Horizontal
+float32                  GNSS_Track_Over
+float32                  GNSS_Vertical_Speed
+std_msgs/Int8            GNSS_info_1
+std_msgs/Int8            GNSS_info_2
+std_msgs/Int8            Number_Sat
+float32                  GNSS_Velocity_Latency
+std_msgs/Int8            GNSS_Angles_Position_Type
+geometry_msgs/Vector3    GNSS_YPR
+float32                  GNSS_GDOP
+float32                  GNSS_PDOP
+float32                  GNSS_HDOP
+float32                  GNSS_VDOP
+float32                  GNSS_TDOP

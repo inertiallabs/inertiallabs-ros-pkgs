@@ -150,6 +150,20 @@ extern "C" {
 
 		double    V_Latency;
 
+		double    GNSS_GDOP;
+		double    GNSS_PDOP;
+		double    GNSS_HDOP;
+		double    GNSS_VDOP;
+		double    GNSS_TDOP;
+
+		int8_t    GNSS_info_1;
+		int8_t    GNSS_info_2;
+		int8_t    Number_Sat;  
+		int8_t    GNSS_Angles_Position_Type;
+
+		double    GNSS_Velocity_Latency;
+		double    GPS_INS_Time;
+
 	} INSPositionData;
 
 
@@ -716,6 +730,8 @@ extern "C" {
 
 
 	DLL_EXPORT IL_ERROR_CODE UserDef_Data_Receive(IL_INS* ins);
+
+	DLL_EXPORT IL_ERROR_CODE INS_UDD(IL_INS* ins , INSCompositeData* comp_data , INSPositionData* pos_data);
 
 	DLL_EXPORT IL_ERROR_CODE INS_Alignment(IL_INS* ins, INSSetInitialData* data);
 

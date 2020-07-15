@@ -11,6 +11,8 @@ add_message_files(
   ins_data.msg
   sensor_data.msg
   ahrs_data.msg
+  udd_data.msg
+
 )
 
 generate_messages(

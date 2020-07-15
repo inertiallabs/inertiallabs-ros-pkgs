@@ -1149,7 +1149,7 @@ void INS_processReceivedPacket(IL_INS* ins, unsigned char buffer[], int num_byte
 }
 
 
-IL_ERROR_CODE UDD_Decode(IL_INS* ins ,int data_type, int start_position)
+IL_ERROR_CODE UDD_Decode(IL_INS* ins ,int data_type, int start_position , INSCompositeData* comp_data , INSPositionData* pos_data)
 {
 	IL_ERROR_CODE errorCode;
 
@@ -1158,8 +1158,7 @@ IL_ERROR_CODE UDD_Decode(IL_INS* ins ,int data_type, int start_position)
 	if (INSInt->recive_flag != ILERR_DATA_IN_BUFFER)
 		return ILERR_MEMORY_ERROR;
 
-	INSCompositeData data;
-	INSPositionData  sensor_data;
+	
 
 	INSInt->user_defined_start_position = start_position;
 
@@ -1184,33 +1183,33 @@ IL_ERROR_CODE UDD_Decode(IL_INS* ins ,int data_type, int start_position)
 		break;
 	}
 	case 7:
-		INS_YPR(ins , &data);
+		INS_YPR(ins , comp_data);
 		break;
 
 	case 16:
-		INS_PositionData(ins,&sensor_data);
+		INS_PositionData(ins,pos_data);
 		break;
 
 	case 18:
-		INS_VelocityData(ins,&sensor_data);
+		INS_VelocityData(ins,pos_data);
 		break;
 
 	case 32:
-		INS_getGyro(ins , &data);
+		INS_getGyro(ins , comp_data);
 		break;
 	case 34:
-		INS_getAcc(ins , &data);
+		INS_getAcc(ins , comp_data);
 		break;
 	case 36:
-		INS_getMag(ins , &data);
+		INS_getMag(ins , comp_data);
 		break;
 	
 	case 48:
-		INS_GNSSPositionData(ins ,&sensor_data);
+		INS_GNSSPositionData(ins ,pos_data);
 		break;
 	
 	case 50:
-		INS_GNSSVelocityData(ins , &sensor_data);
+		INS_GNSSVelocityData(ins , pos_data);
 		break;
 
 	default:
@@ -1221,7 +1220,7 @@ IL_ERROR_CODE UDD_Decode(IL_INS* ins ,int data_type, int start_position)
 
 }
 
-IL_ERROR_CODE INS_UDD(IL_INS* ins)
+IL_ERROR_CODE INS_UDD(IL_INS* ins , INSCompositeData* comp_data , INSPositionData* pos_data)
 {
 	IL_ERROR_CODE errorCode;
 	int i;
@@ -1238,7 +1237,7 @@ IL_ERROR_CODE INS_UDD(IL_INS* ins)
 		int cmd_value = (int)(*(uint8_t*)(&(INSInt->dataBuffer[k + j])));
 		printf("cmd_value  : %d \n" , cmd_value);
 		// 
-		UDD_Decode( ins, cmd_value , k + INSInt->user_defined_data_number + prev_cmd_value_size  );
+		UDD_Decode( ins, cmd_value , k + INSInt->user_defined_data_number + prev_cmd_value_size, comp_data, pos_data );
 
 		prev_cmd_value_size = prev_cmd_value_size + udd_size_aaray[cmd_value];
 	}
