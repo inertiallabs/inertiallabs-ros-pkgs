@@ -1,7 +1,10 @@
-geometry_msgs/Vector3  YPR
+std_msgs/Header           header
+float64                 GPS_INS_Time 
+std_msgs/UInt32          GPS_mSOW 
+geometry_msgs/Vector3   LLH
+geometry_msgs/Vector3   YPR
+geometry_msgs/Vector3   Vel_ENU
 float32[4]              quat_data
-std_msgs/Int8           INS_Solution_Status
-std_msgs/Int8           INS_Lattitude_STD
-std_msgs/Int8           INS_Longitude_STD
-std_msgs/Int8           INS_Altitude_STD
-std_msgs/Int8           INS_Heading_STD
+std_msgs/Int8           Solution_Status
+geometry_msgs/Vector3   Pos_STD
+float32                 Heading_STD

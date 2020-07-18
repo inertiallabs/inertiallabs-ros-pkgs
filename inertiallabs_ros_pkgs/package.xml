@@ -13,10 +13,7 @@
   
   <buildtool_depend>catkin</buildtool_depend>
   <exec_depend>inertiallabs_msgs</exec_depend>
-  <exec_depend>inertiallabs_imu</exec_depend>
   <exec_depend>inertiallabs_ins</exec_depend>
- <!-- <exec_depend>inertiallabs_ahrs</exec_depend> -->
- <!-- <exec_depend>inertiallabs_ahrs_10</exec_depend> -->
 
   <export><metapackage/></export>
 </package>

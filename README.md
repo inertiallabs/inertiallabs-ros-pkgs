@@ -22,7 +22,7 @@ This is a Catkin package. Make sure the package is on `ROS_PACKAGE_PATH` after c
 
 ```
 $ cd <your_work_space>/src
-$ $ git colne https://gitlab.com/oblivione/inertiallabs_ros_pkgs
+$ $ git clone https://us.inertiallabs.com:31443/scm/ins/inertiallabs-ros-pkgs.git
 $ cd <your_work_space>
 $ catkin_make_isolated
 $ source devel/setup.bash
@@ -36,9 +36,6 @@ to use ins only , So you get the subpackages like inertiallabs_ins , inertiallab
 
 ```
 <exec_depend>inertiallabs_ins</exec_depend>
- <!-- <exec_depend>inertiallabs_imu</exec_depend> -->
- <!-- <exec_depend>inertiallabs_ahrs</exec_depend> -->
- <!-- <exec_depend>inertiallabs_ahrs_10</exec_depend> -->
 
 ```
 
@@ -46,42 +43,13 @@ to use ins only , So you get the subpackages like inertiallabs_ins , inertiallab
 
 example rosnodes
 
-for ins on request mode 
+
+for ins OPVT2AHR packet 
 ```
- rosrun inertiallabs_ins ins_onrequest_mode _serial_baud:=460800 _ins_output_format:=3 
+ rosrun inertiallabs_ins il_ins _serial_baud:=460800 _ins_output_format:=0x58 
 
 ```
 
-for ins continues mode 
-```
- rosrun inertiallabs_ins ins_continues_mode _serial_baud:=460800 _ins_output_format:=3 
-
-```
-
-
-for imp-p on request mode 
-```
- rosrun inertiallabs_imu imu_onrequest_mode _serial_baud:=460800 _imu_output_format:=3 
-
-```
-
-for imp-p continues mode 
-```
- rosrun inertiallabs_imu imu_continues_mode _serial_baud:=460800 _imu_output_format:=3 
-
-```
-
-for ahrs-10 on request mode 
-```
- rosrun inertiallabs_ahrs_10 ahrs10_onrequest_mode _serial_baud:=460800 _imu_output_format:=3 
-
-```
-
-for ahrs-10 continues mode 
-```
- rosrun inertiallabs_ahrs_10 ahrs10_continues_mode _serial_baud:=460800 _imu_output_format:=3 
-
-```
 ## Example Usage
 
 **Parameters**
@@ -97,33 +65,22 @@ The baud rate of the serial port. The available baud rates can be checked on the
 
 `ins_output_format` (`int`, `2`)
 
-The output data format of the INS data.
+The output data format of the INS data according to IL INS ICD.
 
 ```
- IL_OPVT_RECEIVE           2      
- IL_QPVT_RECEIVE      		       3     
- IL_OPVT2A_RECEIVE    		       4      
- IL_OPVT2AW_RECEIVE   		       5      
- IL_OPVT2AHR_RECEIVE  		       6       
- IL_OPVTAD_RECEIVE    		       7    
- IL_MINIMAL_DATA_RECEIVE 	       8 
- IL_SENSOR_DATA_RECEIVE          9
- IL_OPVT_RAWIMU_DATA_RECEIVE    11
- IL_OPVT_GNSSEXT_DATA_RECEIVE   12
+ IL_SENSOR_DATA             0x50
+ IL_OPVT                    0x52      
+ IL_MINIMAL_DATA 	        0x53 
+ IL_QPVT      		        0x56     
+ IL_OPVT2A    		        0x57  
+ IL_OPVT2AHR  		        0x58       
+ IL_OPVT2AW   		        0x59      
+ IL_OPVTAD    		        0x61    
+ IL_OPVT_RAWIMU_DATA        0x66
+ IL_OPVT_GNSSEXT_DATA       0x67
 
 ```
-`imu_output_format` (`int`, `3`)
 
-The output data format of the IMP-P data.
-
-```
- IL_IMU_CLB_DATA_RECEIVE      2     
- IL_IMU_GA_DATA_RECEIVE       3      
- IL_IMU_ORIENTATION_RECEIVE     4
- IL_IMU_PSTABILIZATION_RECEIVE  5
- IL_IMU_NMEA_RECEIVE      6
- IL_IMU_GET_DEV_INFO_RECEIVE      9
-```
 **Published Topics**
 
 `/Inertial_Labs/sensor_data` (`ins_ros/sensor_data`)
@@ -132,29 +89,16 @@ Publish Gyro(x,y,z) , Accelation(x,y,z) , Magnetic (x,y,z) , Temprature , Input 
 
 `/Inertial_Labs/ins_data` (`ins_ros/ins_data`)
  
- Publish Heading , Pitch , Roll values .
+Publish GPS INS Time, Latitude, Longitude, Altitude, Heading , Pitch , Roll, East Velocity, North Velocity, Up Velocity values .
 
 `/Inertial_Labs/gps_data` (`ins_ros/gps_data`)
 
- Publish Latitute, Longitute , Altitude , East Speed , North Speed  Vertial Speed values .
+Publish Latitude, Longitude , Altitude , Ground Speed , Track Direction,  Vertial Speed values .
 
-`/Inertial_Labs/quat_data` (`ins_ros/quat_data`)
-
- Publish  Quaternion of orientation values  . Only published in IL_QPVT_RECEIVE data output type . So the commmand line input will be _ins_output_format:=3 .  
-
- `/Inertial_Labs/imu_data` (`ins_ros/imu_data`)
+ `/Inertial_Labs/gnss_data` (`ins_ros/gnss_data`)
   
-Publish  imu data  for while you start the imu nodes in the arc folser . 
+Publish  GNSS service Info 1, Info 2, Satellites Used, Velocity Latency, Heading status, Heading, Pitch, GDOP, PDOP, HDOP, VDOP, TDOP. 
 
-**Debug Mode**
-To see the debug data from the sdk you can enable the debug mode in IL_common.h .The file located inside `intertiallabs_sdk/include/IL_common.h` .
-
-```
-#define IL_DBG 0                   /**< 0 - SDK Debug mode off.
-                                        1 - SDK Debug mode on */
-
-
-```
 ## FAQ
 
 1. The driver can't open my device?\
@@ -179,4 +123,4 @@ This may be due to a recent change in the FTDI USB-Serial driver in the Linux ke
 
 ## Bug Report
 
-Prefer to open an issue. You can also send an E-mail to omprakashpatro@gmail.com.
+Prefer to open an issue. You can also send an E-mail to support@inertiallabs.com.
