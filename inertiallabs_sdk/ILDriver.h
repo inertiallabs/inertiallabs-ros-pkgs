@@ -1,6 +1,7 @@
 #pragma once
 #include <thread>
 #include <mutex>
+#include <fstream>
 #include "dataStructures.h"
 
 class ILDriver
@@ -10,7 +11,7 @@ public:
 	~ILDriver();
 	int connect(const char* path, int baudrate);
 	void disconnect();
-	int start(unsigned char mode, bool onRequest = false);
+	int start(unsigned char mode, bool onRequest = false, const char* logname = nullptr);
 	int request(unsigned char mode, int timeout);
 	int stop();
 	INSDataStruct getLatestData();
@@ -34,5 +35,6 @@ private:
 	int readDevInfo();
 	void readerLoop();
 	static void threadFunc(ILDriver* instance) { instance->readerLoop(); }
+	std::ofstream log;
 };
 

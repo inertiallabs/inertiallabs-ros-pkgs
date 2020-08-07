@@ -1,17 +1,23 @@
 #include "SerialPort.h"
-#ifdef __linux__
+#if defined __linux__
 #include <unistd.h>
 #include <poll.h>
 #include <termios.h>
-#include <cstdio>
 #include <fcntl.h>
 #include <cerrno>
+#elif defined _WIN32 || defined _WIN64
+#include <string>
+#include <sstream>
 #endif // __linux__
+#include <cstdio>
 
 SerialPort::SerialPort()
+	: timeout(1000)
 {
-#ifdef __linux__
+#if defined __linux__
 	fd = -1;
+#elif defined _WIN32 || defined _WIN64
+	hCom = INVALID_HANDLE_VALUE;
 #endif // __linux__
 }
 
@@ -22,31 +28,47 @@ SerialPort::~SerialPort()
 
 int SerialPort::open(const char *path)
 {
-#ifdef __linux__
+#if defined __linux__
 	fd = ::open(path, O_NOCTTY | O_RDWR);
-	if (fd < 0) return errno;
+	if (fd < 0) return -errno;
+#elif defined _WIN32 || defined _WIN64
+	hCom = CreateFileA(path, GENERIC_READ | GENERIC_WRITE, 0, 0, OPEN_EXISTING, 0, nullptr);
+	if (hCom == INVALID_HANDLE_VALUE)
+		return -static_cast<int>(GetLastError());
+	COMMTIMEOUTS timeouts = { MAXDWORD,MAXDWORD,MAXDWORD,1,1 };
+	timeouts.ReadTotalTimeoutConstant = timeout;
+	if (!SetCommTimeouts(hCom, &timeouts))
+		return -2;
 #endif // __linux__
 	return 0;
 }
 
 bool SerialPort::isOpen()
 {
-#ifdef __linux__
-		return fd >= 0;
+#if defined __linux__
+	return fd >= 0;
+#elif defined _WIN32 || defined _WIN64
+	return hCom != INVALID_HANDLE_VALUE;
 #endif // __linux__
 }
 
 void SerialPort::close()
 {
-#ifdef __linux__
-	if (fd >= 0) ::close(fd);
-	fd = -1;
+	if (isOpen())
+	{
+#if defined __linux__
+		::close(fd);
+		fd = -1;
+#elif defined _WIN32 || defined _WIN64
+		CloseHandle(hCom);
+		hCom = INVALID_HANDLE_VALUE;
 #endif // __linux__
+	}
 }
 
 int SerialPort::setBaudrate(int baud)
 {
-#ifdef __linux__
+#if defined __linux__
 	struct termios config;
 	if (tcgetattr(fd, &config) < 0)
 	{
@@ -74,36 +96,69 @@ int SerialPort::setBaudrate(int baud)
 	{
 		return -3;
 	}
-#endif // __linux__
+#elif defined _WIN32 || defined _WIN64
 
+	COMMPROP commProp;
+	if (!GetCommProperties(hCom, &commProp))
+		return -1;
+	if (!(commProp.dwSettableBaud & BAUD_USER))
+		return -2;
+	_DCB config;
+	config.DCBlength = sizeof(config);
+	if (!GetCommState(hCom, &config))
+		return -1;
+	std::stringstream commstr;
+	commstr << "baud=" << baud << " parity=N data=8 stop=1 to=off xon=off odsr=off octs=off dtr=off rts=off idsr=off";
+	if (!BuildCommDCBA(commstr.str().c_str(), &config))
+		return -3;
+	if (!SetCommState(hCom, &config))
+	{
+		auto err = GetLastError();
+		return -3;
+	}
+#endif // __linux__
 	return 0;
 }
 
-int SerialPort::read(char* buf, unsigned int size, int timeout)
+int SerialPort::read(char* buf, unsigned int size)
 {
-#ifdef __linux__
+#if defined __linux__
 	if (!isatty(fd))
-		return -2;
+		return -1;
 	pollfd fds;
 	fds.fd = fd;
 	fds.events = POLLIN;
 	fds.revents = 0;
-	int result = poll(&fds, 1, timeout > 0 ? timeout : -1);
+	int result = poll(&fds, 1, timeout);
 	if (result < 0)
-		return -1;
-	if (result)
-		return ::read(fd, buf, size);
-	return 0;
+		return -errno;
+	if (!result) return 0;
+	result = ::read(fd, buf, size);
+	if (result < 0)
+		return -errno;
+	else
+		return result;
+#elif defined _WIN32 || defined _WIN64
+	DWORD bytesRead = 0;
+	if (!ReadFile(hCom, buf, size, &bytesRead, nullptr))
+		return -static_cast<int>(GetLastError());
+	return bytesRead;
 #endif
 }
 
 int SerialPort::write(char* buf, unsigned int size)
 {
-	int result;
-#ifdef __linux__
-	result = ::write(fd, buf, size);
+#if defined __linux__
+	int result = ::write(fd, buf, size);
 	if (result < 0)
-		printf("Write failed: %i\n", errno);
+		return -errno;
+	else
+		return result;
+#elif defined _WIN32 || defined _WIN64
+	DWORD result;
+	if (WriteFile(hCom, buf, size, reinterpret_cast<LPDWORD>(&result), nullptr))
+		return result;
+	result = GetLastError();
+	return -static_cast<int>(result);
 #endif
-	return result;
 }

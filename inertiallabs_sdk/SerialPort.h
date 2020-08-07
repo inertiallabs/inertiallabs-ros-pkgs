@@ -1,4 +1,8 @@
 #pragma once
+#ifdef _WIN32
+#include <windows.h>
+#endif // __WIN32__
+
 
 class SerialPort
 {
@@ -9,14 +13,15 @@ public:
 	bool isOpen();
 	void close();
 	int setBaudrate(int baud);
-	int read(char *buf, unsigned int size, int timeout = 0);
+	int read(char *buf, unsigned int size);
 	int write(char* buf, unsigned int size);
 
 private:
-#ifdef __linux__
+#if defined __linux__
 	int fd;
+#elif defined _WIN32 || defined _WIN64
+	HANDLE hCom;
 #endif
-#ifdef __WIN32__
-#endif
+	int timeout;
 };
 

@@ -21,7 +21,7 @@ ILDriver::ILDriver()
 ILDriver::~ILDriver()
 {
 	disconnect();
-	delete port;
+	delete reinterpret_cast<SerialPort*>(port);
 }
 
 int ILDriver::connect(const char* path, int baudrate)
@@ -59,7 +59,7 @@ void ILDriver::disconnect()
 	}
 }
 
-int ILDriver::start(unsigned char mode, bool onRequest)
+int ILDriver::start(unsigned char mode, bool onRequest, const char* logname)
 {
 	char command = onRequest ? '\xC1' : mode;
 	if (sessionState != 2)
@@ -67,11 +67,15 @@ int ILDriver::start(unsigned char mode, bool onRequest)
 	onRequestMode = onRequest;
 	sendPacket(0, &command, 1);
 	std::this_thread::sleep_for(std::chrono::milliseconds(500));
-	if (sessionState < 3)
+	if (sessionState < 3) {
 		return 2;
+	}
 	std::this_thread::sleep_for(std::chrono::seconds(deviceParam.initAlignmentTime));
-	if (sessionState < 4)
+	if (sessionState < 4) {
 		return 3;
+	}
+	if (logname)
+		log.open(logname);
 	return 0;
 }
 
@@ -102,6 +106,9 @@ int ILDriver::stop()
 		std::this_thread::sleep_for(std::chrono::milliseconds(100));
 	}
 	std::this_thread::sleep_for(std::chrono::milliseconds(500));
+	if (log) {
+		log.close();
+	}
 	sessionState = 0;
 	if (!devInfoRead)					// In case the device was in auto-start mode or already started when we connected
 		return readDevInfo();
@@ -162,6 +169,7 @@ void ILDriver::readerLoop()
 	int checksum = 0;
 	char buf[65536];
 	UDDParser parser;
+	uint16_t len = 0;
 	string NMEA;
 	string RawIMU;
 	uint32_t RawIMUcounter;
@@ -170,7 +178,7 @@ void ILDriver::readerLoop()
 	uint8_t byte = 0, prevByte = 0;
 	while (!quit)
 	{
-		int readBytes = reinterpret_cast<SerialPort*>(port)->read(buf, sizeof(buf), 1000);
+		int readBytes = reinterpret_cast<SerialPort*>(port)->read(buf, sizeof(buf));
 		if (readBytes < 0)
 			quit = true;
 		else
@@ -329,6 +337,12 @@ void ILDriver::readerLoop()
 								else
 								{
 									sessionState = 4;
+									if (log) {
+										if (parser.hdrStream.str().size()) {
+											log << parser.hdrStream.str() << std::endl;
+										}
+										log << parser.txtStream.str() << std::endl;
+									}
 									std::lock_guard<std::mutex> guard(dataMutex);
 									latestData = parser.outData;
 									if (onRequestMode && parser.code == requestCode)
