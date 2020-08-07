@@ -91,7 +91,8 @@ int SerialPort::setBaudrate(int baud)
 		return -2;
 	}
 	config.c_cflag &= ~(CSIZE | PARENB);
-	config.c_cflag |= CS8;
+	config.c_cflag |= CS8 | CREAD | CLOCAL;
+	config.c_lflag |= IEXTEN;
 	if (tcsetattr(fd, TCSANOW, &config) < 0)
 	{
 		return -3;

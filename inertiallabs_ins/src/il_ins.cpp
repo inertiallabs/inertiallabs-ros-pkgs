@@ -140,8 +140,6 @@ int main(int argc,char** argv)
 	pubgps_data    =np.advertise<inertiallabs_msgs::gps_data> ("/Inertial_Labs/gps_data",1);
 	pubgnss_data   =np.advertise<inertiallabs_msgs::gnss_data>("/Inertial_Labs/gnss_data",1); 
 
-	
-	ROS_INFO("Ready to answer your queries regarding ins data");
 
 	ROS_INFO("connecting to INS. port: %s at a baudrate:%d\n",port.c_str(),baudrate);
 
@@ -166,7 +164,7 @@ int main(int argc,char** argv)
 		    ins.disconnect();
 		    exit(EXIT_FAILURE);
 	    }
-
+	ROS_INFO("Ready to answer your queries regarding ins data");
  	ROS_INFO("publishing at %d Hz\n",publish_rate);
 	ROS_INFO("rostopic echo the topics to see the data");
 
