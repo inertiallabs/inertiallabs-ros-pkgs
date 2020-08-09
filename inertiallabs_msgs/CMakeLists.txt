@@ -6,10 +6,7 @@ find_package(catkin REQUIRED COMPONENTS std_msgs geometry_msgs actionlib_msgs me
 add_message_files(
   DIRECTORY msg
   FILES
-  gps_data.msg
-  gnss_data.msg
   ins_data.msg
-  sensor_data.msg
 )
 
 generate_messages(

@@ -41,6 +41,7 @@ namespace IL {
 		double VelENU[3];
 		double Gyro[3];
 		double Acc[3];
+		double AccPVPoint[3];
 		double Mag[3];
 		double pBar, hBar;
 		double GBias[3];
@@ -65,10 +66,11 @@ namespace IL {
 		double Temp;
 		int USW;
 		int INSSolStatus;
-		double KFLatStd, KFLonStd, KFAltStd, KFHdgStd;
+		double KFLatStd, KFLonStd, KFAltStd, KFHdgStd, KFVelStd[3];
 		double Odometer, AirSpeed, WindN, WindE, WindNStd, WindEStd;
 		double LatExt, LonExt, AltExt, LatExtStd, LonExtStd, AltExtStd, ExtPosLatency;
 		double LocLat, LocLon, LocAlt, LocDopplerShift, LocDopplerShiftStd;
+		double ExtAntPri[3], ExtAntSec[3];
 		int NewAiding;
 		double HdgExt, HdgExtStd, HdgExtLatency;
 		double DVLRight, DVLFwd, DVLUp, DVLRightStd, DVLFwdStd, DVLUpStd, DVLLatency, DVLPressure;
@@ -76,8 +78,9 @@ namespace IL {
 		double PitchExt, RollExt;
 		int Latency_ms_pos, Latency_ms_vel, Latency_ms_head;
 		int UP, UT;
-		double GNSS_ECEF_X, GNSS_ECEF_Y, GNSS_ECEF_Z, GNSS_ECEF_VX, GNSS_ECEF_VY, GNSS_ECEF_VZ, DiffAge;
+		double GNSS_ECEF_X, GNSS_ECEF_Y, GNSS_ECEF_Z, GNSS_ECEF_VX, GNSS_ECEF_VY, GNSS_ECEF_VZ, GNSS_ECEF_VXStd, GNSS_ECEF_VYStd, GNSS_ECEF_VZStd, DiffAge;
 		int LatencyECEF;
+		int PPPStore, PPPApp;
 		uint64_t dataPresent[8];
 	};
 

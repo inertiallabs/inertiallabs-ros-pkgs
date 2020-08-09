@@ -130,6 +130,9 @@ namespace IL {
 			case 0x12:
 				hdrStream << "V_East\tV_North\tV_Up";
 				break;
+			case 0x1B:
+				hdrStream << "V_East\tV_North\tV_Up";
+				break;
 			case 0x20:
 			case 0x21:
 				hdrStream << "GX\tGY\tGZ";
@@ -146,6 +149,9 @@ namespace IL {
 				break;
 			case 0x26:
 				hdrStream << "GBX\tGBY\tGBZ\tABX\tABY\tABZ\tBReserved";
+				break;
+			case 0x27:
+				hdrStream << "APVPX\tAPVPY\tAPVPZ";
 				break;
 			case 0x30:
 			case 0x31:
@@ -211,6 +217,15 @@ namespace IL {
 			case 0x45:
 				hdrStream << "Trk_gnd";
 				break;
+			case 0x47:
+				hdrStream << "DiffAge";
+				break;
+			case 0x48:
+				hdrStream << "GNSS_ECEF_VXStsd\tGNSS_ECEF_VYStd\tGNSS_ECEF_VZStd";
+				break;
+			case 0x49:
+				hdrStream << "PPPApp\tPPPStore";
+				break;
 			case 0x50:
 				hdrStream << "VSup";
 				break;
@@ -231,6 +246,12 @@ namespace IL {
 				break;
 			case 0x56:
 				hdrStream << "KFHdgStd";
+				break;
+			case 0x57:
+				hdrStream << "KFLatStd\tKFLonStd\tKFAltStd";
+				break;
+			case 0x58:
+				hdrStream << "KFVEStd\tKFVNStd\tKFVUStd";
 				break;
 			case 0x60:
 				hdrStream << "Odometer";
@@ -261,6 +282,9 @@ namespace IL {
 				break;
 			case 0x69:
 				hdrStream << "PitchExt\tRollExt";
+				break;
+			case 0x6A:
+				hdrStream << "PriAntRightExt\tPriAntForwardExt\tPriAntUpExt\tSecAntRightExt\tSecAntForwardExt\tSecAntUpExt";
 				break;
 			case 0xF0:
 			case 0xF7:
@@ -358,6 +382,10 @@ namespace IL {
 				for (int ind = 0; ind < 3; ++ind)
 					outData.VelENU[ind] = readScaled<int32_t>(SV, ind < 2);
 				break;
+			case 0x1B:
+				for (int ind = 0; ind < 3; ++ind)
+					outData.VelENU[ind] = readScaled<int32_t>(1e6, ind < 2);
+				break;
 			case 0x20:
 				for (int ind = 0; ind < 3; ++ind)
 				{
@@ -390,6 +418,10 @@ namespace IL {
 				for (int ind = 0; ind < 3; ++ind)
 					outData.ABias[ind] = readScaled<int8_t>(5e4, true);
 				readScaled<uint8_t>(1, false);
+				break;
+			case 0x27:
+				for (int ind = 0; ind < 3; ++ind)
+					outData.AccPVPoint[ind] = readScaled<int32_t>(1e5, ind < 2);
 				break;
 			case 0x30:
 				outData.LatGNSS = readScaled<int32_t>(1e7, true);
@@ -481,6 +513,18 @@ namespace IL {
 			case 0x45:
 				outData.Trk_gnd = readScaled<uint16_t>(100, false);
 				break;
+			case 0x47:
+				outData.DiffAge = readScaled<uint16_t>(10, false);
+				break;
+			case 0x48:
+				outData.GNSS_ECEF_VXStd = readScaled<uint16_t>(1000, true);
+				outData.GNSS_ECEF_VYStd = readScaled<uint16_t>(1000, true);
+				outData.GNSS_ECEF_VZStd = readScaled<uint16_t>(1000, true);
+				break;
+			case 0x49:
+				outData.PPPApp = readScaled<uint8_t>(1, true);
+				outData.PPPStore = readScaled<uint8_t>(1, false);
+				break;
 			case 0x50:
 				outData.VSup = readScaled<uint16_t>(100, false);
 				break;
@@ -503,6 +547,16 @@ namespace IL {
 				break;
 			case 0x56:
 				outData.KFHdgStd = readScaled<uint8_t>(100, false);
+				break;
+			case 0x57:
+				outData.KFLatStd = readScaled<uint16_t>(1000, true);
+				outData.KFLonStd = readScaled<uint16_t>(1000, true);
+				outData.KFAltStd = readScaled<uint16_t>(1000, false);
+				break;
+			case 0x58:
+				outData.KFVelStd[0] = readScaled<uint16_t>(1000, true);
+				outData.KFVelStd[1] = readScaled<uint16_t>(1000, true);
+				outData.KFVelStd[2] = readScaled<uint16_t>(1000, false);
 				break;
 			case 0x60:
 				outData.Odometer = readScaled<int32_t>(1000, false);
@@ -560,6 +614,12 @@ namespace IL {
 			case 0x69:
 				outData.PitchExt = readScaled<int16_t>(100, true);
 				outData.RollExt = readScaled<int16_t>(100, false);
+				break;
+			case 0x6A:
+				for (int ind = 0; ind < 3; ++ind)
+					outData.ExtAntPri[ind] = readScaled<int16_t>(1e3, true);
+				for (int ind = 0; ind < 3; ++ind)
+					outData.ExtAntSec[ind] = readScaled<int16_t>(1e3, ind < 2);
 				break;
 			case 0xF0:
 				outData.Latency_ms_pos = readScaled<uint8_t>(1, true);

@@ -8,15 +8,12 @@
 #include "ILDriver.h"
 
 //adding message type headers
-#include <inertiallabs_msgs/gps_data.h>
-#include <inertiallabs_msgs/sensor_data.h>
 #include <inertiallabs_msgs/ins_data.h>
-#include <inertiallabs_msgs/gnss_data.h>
 
 //Publishers
 
 struct Context {
-	ros::Publisher publishers[4];
+	ros::Publisher publisher;
 	std::string imu_frame_id;
 };
 
@@ -26,82 +23,51 @@ void publish_device(IL::INSDataStruct *data, void* contextPtr)
 	static int seq=0;
 	seq++;
 
-	inertiallabs_msgs::gps_data msg_gps_data;
-	inertiallabs_msgs::gnss_data msg_gnss_data;
 	inertiallabs_msgs::ins_data msg_ins_data;
-	inertiallabs_msgs::sensor_data msg_sensor_data;
 
 	ros::Time timestamp=ros::Time::now();
 	
-	if(context->publishers[0].getNumSubscribers()>0)
-	{
-		msg_sensor_data.header.seq=seq;
-		msg_sensor_data.header.stamp=timestamp;
-		msg_sensor_data.header.frame_id=context->imu_frame_id;
-		msg_sensor_data.Mag.x=data->Mag[0];
-		msg_sensor_data.Mag.y=data->Mag[0];
-		msg_sensor_data.Mag.z=data->Mag[0];
-		msg_sensor_data.Accel.x=data->Acc[0];
-		msg_sensor_data.Accel.y=data->Acc[1];
-		msg_sensor_data.Accel.z=data->Acc[2];
-		msg_sensor_data.Gyro.x=data->Gyro[0];
-		msg_sensor_data.Gyro.y=data->Gyro[1];
-		msg_sensor_data.Gyro.z=data->Gyro[2];
-		msg_sensor_data.Temp=data->Temp;
-		msg_sensor_data.Vinp=data->VSup;
-		msg_sensor_data.Pressure=data->hBar;
-		msg_sensor_data.Barometric_Height=data->pBar;
-		context->publishers[0].publish(msg_sensor_data);
-	}
-	if(context->publishers[1].getNumSubscribers()>0)
+	if(context->publisher.getNumSubscribers()>0)
 	{
 		msg_ins_data.header.seq=seq;
 		msg_ins_data.header.stamp=timestamp;
 		msg_ins_data.header.frame_id=context->imu_frame_id;
-		msg_ins_data.YPR.x=data->Heading;
-		msg_ins_data.YPR.y=data->Pitch;
-		msg_ins_data.YPR.z=data->Roll;
-		msg_ins_data.LLH.x=data->Latitude;
-		msg_ins_data.LLH.y=data->Longitude;
-		msg_ins_data.LLH.z=data->Altitude;
+		msg_ins_data.GPS_INS_Time=data->GPS_INS_Time;
+		msg_ins_data.GPS_IMU_Time=data->GPS_IMU_Time;
+		msg_ins_data.Gyro.x=data->Gyro[0];
+		msg_ins_data.Gyro.y=data->Gyro[1];
+		msg_ins_data.Gyro.z=data->Gyro[2];
+		msg_ins_data.Acc.x=data->Acc[0];
+		msg_ins_data.Acc.y=data->Acc[1];
+		msg_ins_data.Acc.z=data->Acc[2];
+		msg_ins_data.OriQuat.w=data->Quat[0];
+		msg_ins_data.OriQuat.x=data->Quat[1];
+		msg_ins_data.OriQuat.y=data->Quat[2];
+		msg_ins_data.OriQuat.z=data->Quat[3];
+		msg_ins_data.INS_LLH.x=data->Latitude;
+		msg_ins_data.INS_LLH.y=data->Longitude;
+		msg_ins_data.INS_LLH.z=data->Altitude;
 		msg_ins_data.Vel_ENU.x=data->VelENU[0];
 		msg_ins_data.Vel_ENU.y=data->VelENU[1];
 		msg_ins_data.Vel_ENU.z=data->VelENU[2];
-		msg_ins_data.GPS_INS_Time=data->GPS_INS_Time;
-		msg_ins_data.GPS_mSOW.data=data->ms_gps;
-		context->publishers[1].publish(msg_ins_data);
-	}
-	if(context->publishers[2].getNumSubscribers()>0)
-	{
-		msg_gps_data.header.seq=seq;
-		msg_gps_data.header.stamp=timestamp;
-		msg_gps_data.header.frame_id=context->imu_frame_id;
-		msg_gps_data.Latitude=data->LatGNSS;
-		msg_gps_data.Longitude=data->LonGNSS;
-		msg_gps_data.Altitude=data->AltGNSS;
-		msg_gps_data.HorSpeed=data->V_Hor;
-		msg_gps_data.SpeedDir=data->Trk_gnd;
-		msg_gps_data.VerSpeed=data->V_ver;
-		context->publishers[2].publish(msg_gps_data);
-    }
-	if(context->publishers[3].getNumSubscribers()>0)
-	{
-		msg_gnss_data.header.seq=seq;
-		msg_gnss_data.header.stamp=timestamp;
-		msg_gnss_data.header.frame_id=context->imu_frame_id;
-		msg_gnss_data.GNSS_info_1=data->GNSSInfo1;
-		msg_gnss_data.GNSS_info_2=data->GNSSInfo2;
-		msg_gnss_data.Number_Sat=data->SVsol;
-		msg_gnss_data.GNSS_Velocity_Latency=data->GNSSVelLatency;
-		msg_gnss_data.GNSS_Angles_Position_Type=data->AnglesType;
-		msg_gnss_data.GNSS_Heading=data->Heading_GNSS;
-		msg_gnss_data.GNSS_Pitch=data->Pitch_GNSS;
-		msg_gnss_data.GNSS_GDOP=data->GDOP;
-		msg_gnss_data.GNSS_PDOP=data->PDOP;
-		msg_gnss_data.GNSS_HDOP=data->HDOP;
-		msg_gnss_data.GNSS_VDOP=data->VDOP;
-		msg_gnss_data.GNSS_TDOP=data->TDOP;
-		context->publishers[3].publish(msg_gnss_data);
+		msg_ins_data.GNSS_LLH.x=data->LatGNSS;
+		msg_ins_data.GNSS_LLH.y=data->LonGNSS;
+		msg_ins_data.GNSS_LLH.z=data->AltGNSS;
+		msg_ins_data.GDOP = data->GDOP;
+		msg_ins_data.PDOP = data->PDOP;
+		msg_ins_data.HDOP = data->HDOP;
+		msg_ins_data.VDOP = data->VDOP;
+		msg_ins_data.TDOP = data->TDOP;
+		msg_ins_data.Satellites = data->SVsol;
+		msg_ins_data.GNSS_Info1 = data->GNSSInfo1;
+		msg_ins_data.GNSS_Info2 = data->GNSSInfo2;
+		msg_ins_data.Solution_Status = data->INSSolStatus;
+		msg_ins_data.GNSS_Heading_Type = data->AnglesType;
+		msg_ins_data.New_GNSS_Flags = data->NewGPS;
+		msg_ins_data.GNSS_Track_GND = data->Trk_gnd;
+		msg_ins_data.Diff_Age = data->DiffAge;
+		msg_ins_data.USW = data->USW;
+		context->publisher.publish(msg_ins_data);
 	}
 }
 
@@ -119,15 +85,12 @@ int main(int argc,char** argv)
 
 	//command line varibales
 
-	np.param<std::string>("ins_url",port,"serial:/dev/ttyUSB0:115200");
-	np.param<int>("ins_output_format",ins_output_format,0x52);
+	np.param<std::string>("ins_url",port,"serial:/dev/ttyUSB0:460800");
+	np.param<int>("ins_output_format",ins_output_format,0x95);
 
 	//Initializing Publishers
 
-	context.publishers[0] = np.advertise<inertiallabs_msgs::sensor_data> ("/Inertial_Labs/sensor_data",1);
-	context.publishers[1] = np.advertise<inertiallabs_msgs::ins_data> ("/Inertial_Labs/ins_data",1);
-	context.publishers[2] = np.advertise<inertiallabs_msgs::gps_data> ("/Inertial_Labs/gps_data",1);
-	context.publishers[3] = np.advertise<inertiallabs_msgs::gnss_data>("/Inertial_Labs/gnss_data",1); 
+	context.publisher = np.advertise<inertiallabs_msgs::ins_data> ("/Inertial_Labs/ins_data",1);
 
 
 	ROS_INFO("connecting to INS at URL %s\n",port.c_str());
