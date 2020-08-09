@@ -25,7 +25,7 @@ $ cd <your_work_space>/src
 $ $ git clone https://us.inertiallabs.com:31443/scm/ins/inertiallabs-ros-pkgs.git
 $ cd <your_work_space>
 $ catkin_make_isolated
-$ source devel/setup.bash
+$ source devel_isolated/setup.bash
 
 ```
 
@@ -44,9 +44,20 @@ to use ins only , So you get the subpackages like inertiallabs_ins , inertiallab
 example rosnodes
 
 
-for ins OPVT2AHR packet 
+for ins OPVT2AHR packet via USB serial port
 ```
- rosrun inertiallabs_ins il_ins _serial_baud:=460800 _ins_output_format:=0x58 
+ rosrun inertiallabs_ins il_ins url:=serial:/dev/ttyUSB0:460800 _ins_output_format:=0x58 
+
+```
+for ins OPVT packet via UDP (INS hostname is used)
+```
+ rosrun inertiallabs_ins il_ins url:=udp:INS-F2001234:23 _ins_output_format:=0x52 
+
+```
+
+for ins OPVT packet via UDP (INS IP address is used)
+```
+ rosrun inertiallabs_ins il_ins url:=udp:192.168.0.249:23 _ins_output_format:=0x52 
 
 ```
 
@@ -54,14 +65,9 @@ for ins OPVT2AHR packet
 
 **Parameters**
 
-`serial_port` (`string`, `default: /dev/ttyUSB0`)
+`url` (`string`, `default: serial:/dev/ttyUSB0:115200`)
 
-Port which the device connected to. This can be checked by command `dmesg`.
-
-`serial_baud` (`int`, `460800`)
-
-The baud rate of the serial port. The available baud rates can be checked on the user manual. It is suggested that the baud rate is kept at `460800` to ensure the high frequency transmission. The device will send `permission denied` error code if the baud rate cannot support the desired data package at the desired frequency.The sdk supports 7 baud rates.
-
+Port the device is connected to. Can be serial:[path to device]:[baudrate], tcp:[hostname or address]:[tcp server port], or udp:[hostname or address]:[udp server port]. Inertial Labs Driver supports serial connection
 
 `ins_output_format` (`int`, `2`)
 
@@ -78,10 +84,11 @@ The output data format of the INS data according to IL INS ICD.
  IL_OPVTAD    		        0x61    
  IL_OPVT_RAWIMU_DATA        0x66
  IL_OPVT_GNSSEXT_DATA       0x67
+ IL_USER_DEFINED_DATA       0x67
 
 ```
 
-**Published Topics**
+**Published Topics - feel free to modify using fields from IL::INSDataStruct**
 
 `/Inertial_Labs/sensor_data` (`ins_ros/sensor_data`)
  
@@ -101,7 +108,7 @@ Publish  GNSS service Info 1, Info 2, Satellites Used, Velocity Latency, Heading
 
 ## FAQ
 
-1. The driver can't open my device?\
+1. The driver can't open my serial device?\
 Make sure you have ownership of the device in `/dev`.
 
 2. Why I have permission error during the initialization process of the driver?\
@@ -120,6 +127,8 @@ This may be due to a recent change in the FTDI USB-Serial driver in the Linux ke
       fi
     done
     ```
+4. Why a field value is always zero?\
+Most likely, because this field is not provided in the selected INS data packet. The most versatile data packet is User-Defined Data, which allows to order any set of fields
 
 ## Bug Report
 

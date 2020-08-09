@@ -1,27 +1,23 @@
 #pragma once
-#ifdef _WIN32
-#include <windows.h>
-#endif // __WIN32__
+#include "Transport.h"
 
+namespace IL {
 
-class SerialPort
-{
-public:
-	SerialPort();
-	~SerialPort();
-	int open(const char *path);
-	bool isOpen();
-	void close();
-	int setBaudrate(int baud);
-	int read(char *buf, unsigned int size);
-	int write(char* buf, unsigned int size);
+	class SerialPort : public Transport
+	{
+	public:
+		SerialPort();
+		virtual ~SerialPort();
+		virtual int open(const char* url);
+		virtual bool isOpen();
+		virtual void close();
+		virtual int read(char* buf, unsigned int size);
+		virtual int write(char* buf, unsigned int size);
 
-private:
-#if defined __linux__
-	int fd;
-#elif defined _WIN32 || defined _WIN64
-	HANDLE hCom;
-#endif
-	int timeout;
-};
+	private:
+		int fd;
+		void* hCom;
+		int timeout;
+	};
+}
 
