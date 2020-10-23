@@ -2,7 +2,7 @@
 #include <iostream>
 
 
-void callback(IL::INSDataStruct* data, void* context) 
+void callback(IL::INSDataStruct* data, void* context)
 {
     std::cout << *reinterpret_cast<std::string*>(context) << " Time: " << data->GPS_INS_Time << ", USW = " << data->USW << std::endl;
 }
@@ -15,7 +15,7 @@ int main()
     std::string URL;
     std::cin >> URL;
     if (driver.connect(URL.c_str()) != 0)
-    { 
+    {
         std::cout << "IL Driver failed to connect!" << std::endl;
         return 1;
     }

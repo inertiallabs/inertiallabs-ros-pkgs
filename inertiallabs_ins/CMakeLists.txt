@@ -3,7 +3,7 @@ project(inertiallabs_ins)
 
 find_package(catkin REQUIRED COMPONENTS
 tf
-rospy 
+rospy
 roscpp
 geometry_msgs
 sensor_msgs
