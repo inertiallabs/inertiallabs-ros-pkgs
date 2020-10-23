@@ -43,6 +43,7 @@ add_executable(il_ins src/il_ins.cpp
                       ../inertiallabs_sdk/platforms/${IL_PLATFORM}/SerialPort.cpp
                       ../inertiallabs_sdk/platforms/${IL_PLATFORM}/NetClient.cpp
 )
+add_dependencies(il_ins inertiallabs_msgs_generate_messages_cpp)
 if(WIN32)
 	target_link_libraries(il_ins ${catkin_LIBRARIES} )
 else()

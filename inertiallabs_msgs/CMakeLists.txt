@@ -7,6 +7,10 @@ add_message_files(
   DIRECTORY msg
   FILES
   ins_data.msg
+  sensor_data.msg
+  gnss_data.msg
+  gps_data.msg
+  marine_data.msg
 )
 
 generate_messages(
