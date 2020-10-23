@@ -5,22 +5,22 @@ namespace IL {
 
 	namespace PacketType {
 		const uint8_t Cobham_UAV200_Satcom = 0x46;
-		const uint8_t INS_Sensors = 0x50;
-		const uint8_t INS_OPVT = 0x52;
-		const uint8_t INS_min = 0x53;
-		const uint8_t INS_NMEA = 0x54;
-		const uint8_t INS_Sensors_NMEA = 0x55;
-		const uint8_t INS_QPVT = 0x56;
-		const uint8_t INS_OPVT2A = 0x57;
-		const uint8_t INS_OPVT2AHR = 0x58;
-		const uint8_t INS_OPVT2AW = 0x59;
-		const uint8_t INS_OPVTAD = 0x61;
+		const uint8_t IL_Sensors = 0x50;
+		const uint8_t IL_OPVT = 0x52;
+		const uint8_t IL_min = 0x53;
+		const uint8_t IL_NMEA = 0x54;
+		const uint8_t IL_Sensors_NMEA = 0x55;
+		const uint8_t IL_QPVT = 0x56;
+		const uint8_t IL_OPVT2A = 0x57;
+		const uint8_t IL_OPVT2AHR = 0x58;
+		const uint8_t IL_OPVT2AW = 0x59;
+		const uint8_t IL_OPVTAD = 0x61;
 		const uint8_t MRU_OPVTHSSHR = 0x64;
-		const uint8_t INS_OPVT_rawIMU = 0x66;
-		const uint8_t INS_OPVT_GNSSext = 0x67;
+		const uint8_t IL_OPVT_rawIMU = 0x66;
+		const uint8_t IL_OPVT_GNSSext = 0x67;
 		const uint8_t SPAN_rawIMU = 0x68;
-		const uint8_t INS_UDD = 0x95;
-	}
+		const uint8_t IL_UDD = 0x95;
+	};
 
 	struct INSDataStruct
 	{

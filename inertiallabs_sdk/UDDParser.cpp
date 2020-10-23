@@ -38,27 +38,27 @@ namespace IL {
 		switch (code)
 		{
 			using namespace PacketType;
-		case INS_Sensors:
+		case IL_Sensors:
 			statusStream << "Sensors";
 			dataSet = "\x07\x20\x22\x24\xFF\xFF\x53\x50\x52\x30\x34\x32\x01\xF3\xF0\xF4\x41\xFE";
 			break;
-		case INS_OPVT:
+		case IL_OPVT:
 			statusStream << "OPVT";
 			dataSet = "\x07\x20\x22\x24\x53\x50\x52\x10\x12\x30\x32\x01\x36\x3B\xF0\x25\x41";
 			break;
-		case INS_min:
+		case IL_min:
 			statusStream << "Minimal";
 			dataSet = "\x07\x53\x50\x52\x10\x12\x01\xF5\x3B";
 			break;
-		case INS_QPVT:
+		case IL_QPVT:
 			statusStream << "QPVT";
 			dataSet = "\x09\x20\x22\x24\x53\x50\x52\x10\x12\x30\x32\x01\x36\x3B\xF0\x25\x41";
 			break;
-		case INS_OPVT2A:
+		case IL_OPVT2A:
 			statusStream << "OPVT2A";
 			dataSet = "\x07\x20\x22\x24\x53\x50\x52\x10\x12\x30\x32\x01\x36\x3B\x3D\x3A\xF2\xF1\xF7\x25\x41";
 			break;
-		case INS_OPVT2AHR:
+		case IL_OPVT2AHR:
 			statusStream << "OPVT2AHR";
 			dataSet = "\x07\x21\x23\x24\x53\x50\x52\x11\x12\x31\x32\x01\x36\x3B"
 					  "\x3D\x3A\xF2\xF1\xF7\x25\x41";
@@ -72,25 +72,25 @@ namespace IL {
 				dataSet[10] = '\x17';
 			}
 			break;
-		case INS_OPVT2AW:
+		case IL_OPVT2AW:
 			statusStream << "OPVT2AW";
 			dataSet = "\x07\x20\x22\x24\x53\x50\x52\x10\x12\x30\x32\x01\x3C\x36\x3B\xF0\x3A\x33\x35\x25\x41";
 			break;
-		case INS_OPVTAD:
+		case IL_OPVTAD:
 			statusStream << "OPVTAD";
 			dataSet = "\x07\x21\x23\x24\x53\x50\x52\x11\x12\x31\x32\x01\x36\x3B\xF0\x3A\xF2\xF1\x25\x41\x60\x61\x62\x63\x64\x65";
 			break;
-		case INS_OPVT_rawIMU:
+		case IL_OPVT_rawIMU:
 			statusStream << "OPVTRawIMU";
 			dataSet = "\x02\x03\x21\x23\x53\x08\x11\x12\x36\x3B\x41";
 			SA = SG = 1e4;
 			break;
-		case INS_OPVT_GNSSext:
+		case IL_OPVT_GNSSext:
 			statusStream << "OPVTGNSSExt";
 			dataSet = "\x01\x08\x11\x12\x21\x23\x24\xF6\x3D\xF7\x41";
 			SO = SA = SG = SV = 1e6;
 			break;
-		case INS_UDD:
+		case IL_UDD:
 			statusStream << "UDD";
 			dataSet.clear();
 			dataSet.append(reinterpret_cast<const char*>(&payloadBuf[1]), payloadBuf[0]);

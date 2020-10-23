@@ -10,7 +10,7 @@ void callback(IL::INSDataStruct* data, void* context)
 int main()
 {
     IL::Driver driver;
-    uint8_t packetType = IL::PacketType::INS_UDD;
+    uint8_t packetType = IL::PacketType::IL_OPVT;
     std::cout << "Enter INS URL ([serial/tcp/udp]:[com port path / hostname or IP]:[baud rate or TCP/UDP port]: ";
     std::string URL;
     std::cin >> URL;
