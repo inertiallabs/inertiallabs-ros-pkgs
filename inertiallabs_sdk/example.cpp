@@ -30,7 +30,7 @@ int main()
     driver.setCallback(&callback, &context);
     std::this_thread::sleep_for(std::chrono::seconds(1));
     std::cout << "Starting device in polling mode" << std::endl;
-    if (res = driver.start(packetType, true))
+    if ((res = driver.start(packetType, true)))
     {
         std::cout << "INS failed to start! " << res << std::endl;
         driver.disconnect();
@@ -50,7 +50,7 @@ int main()
     std::cout << "Stopping device" << std::endl;
     driver.stop();
     std::cout << "Starting device in continuous mode" << std::endl;
-    if (res = driver.start(packetType, false))
+    if ((res = driver.start(packetType, false)))
     {
         std::cout << "INS failed to start! " << res << std::endl;
         driver.disconnect();

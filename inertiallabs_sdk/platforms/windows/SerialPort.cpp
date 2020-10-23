@@ -6,8 +6,8 @@
 namespace IL {
 
 	SerialPort::SerialPort()
-		: timeout(1000)
-		, hCom(INVALID_HANDLE_VALUE)
+		: hCom(INVALID_HANDLE_VALUE)
+		, timeout(1000)
 	{
 	}
 

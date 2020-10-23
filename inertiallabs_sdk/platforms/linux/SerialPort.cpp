@@ -10,8 +10,8 @@
 namespace IL {
 
 	SerialPort::SerialPort()
-		: timeout(1000)
-		, fd(-1)
+		: fd(-1)
+		, timeout(1000)
 	{
 	}
 
