@@ -9,7 +9,7 @@ ROS Packages for Inertial Labs Products . Current supported devices INS , IMU-P 
 
 The `inertiallabs_ros_pkgs` package is a linux ROS driver for GPS-Aided Inertial Navigation Systems (INS), IMU-P ,AHRS and AHRS-10 of [Inertial Labs](https://inertiallabs.com/). The package is developed based on the official [SDK v0.2](https://gitlab.com/oblivione/inertiallabs_sdk) for Linux.
 
-The package is tested on Ubuntu 16.04 LTS & 18.04 LTS  with ROS Kinetic & ROS Melodic . You can install ROS from [here](http://wiki.ros.org/kinetic/Installation/Ubuntu). 
+The package is tested on Ubuntu 16.04 LTS & 18.04 LTS  with ROS Kinetic & ROS Melodic . You can install ROS from [here](http://wiki.ros.org/kinetic/Installation/Ubuntu).
 
 ## License
 
@@ -31,8 +31,8 @@ $ source devel_isolated/setup.bash
 
 Why catkin_make_isolated ?
 
-We developed a package for multiple devices with same dependencies , so to avoid confilcts we are compiling using catkin_make_isolated . If you need 
-to use ins only , So you get the subpackages like inertiallabs_ins , inertiallabs_sdk , intertiallans_msgs and intertiallabs_ros_pkgs to your workspace and use your own build system to compile it . You have to change the intertiallabs_ros_pkgs/intertiallabs_ros_pkgs/package.xml 
+We developed a package for multiple devices with same dependencies , so to avoid confilcts we are compiling using catkin_make_isolated . If you need
+to use ins only , So you get the subpackages like inertiallabs_ins , inertiallabs_sdk , intertiallans_msgs and intertiallabs_ros_pkgs to your workspace and use your own build system to compile it . You have to change the intertiallabs_ros_pkgs/intertiallabs_ros_pkgs/package.xml
 
 ```
 <exec_depend>inertiallabs_ins</exec_depend>
@@ -46,18 +46,18 @@ example rosnodes
 
 for ins OPVT2AHR packet via USB serial port
 ```
- rosrun inertiallabs_ins il_ins url:=serial:/dev/ttyUSB0:460800 _ins_output_format:=0x58 
+ rosrun inertiallabs_ins il_ins url:=serial:/dev/ttyUSB0:460800 _ins_output_format:=0x58
 
 ```
 for ins OPVT packet via UDP (INS hostname is used)
 ```
- rosrun inertiallabs_ins il_ins url:=udp:INS-F2001234:23 _ins_output_format:=0x52 
+ rosrun inertiallabs_ins il_ins _ins_url:=udp:INS-F2001234:23 _ins_output_format:=0x52
 
 ```
 
 for ins OPVT packet via UDP (INS IP address is used)
 ```
- rosrun inertiallabs_ins il_ins url:=udp:192.168.0.249:23 _ins_output_format:=0x52 
+ rosrun inertiallabs_ins il_ins _ins_url:=udp:192.168.0.249:23 _ins_output_format:=0x52
 
 ```
 
@@ -69,42 +69,48 @@ for ins OPVT packet via UDP (INS IP address is used)
 
 Port the device is connected to. Can be serial:[path to device]:[baudrate], tcp:[hostname or address]:[tcp server port], or udp:[hostname or address]:[udp server port]. Inertial Labs Driver supports serial connection
 
-`ins_output_format` (`int`, `2`)
+`ins_output_format` (`int`, `82`)
 
 The output data format of the INS data according to IL INS ICD.
 
 ```
  IL_SENSOR_DATA             0x50
- IL_OPVT                    0x52      
- IL_MINIMAL_DATA 	        0x53 
- IL_QPVT      		        0x56     
- IL_OPVT2A    		        0x57  
- IL_OPVT2AHR  		        0x58       
- IL_OPVT2AW   		        0x59      
- IL_OPVTAD    		        0x61    
+ IL_OPVT                    0x52
+ IL_MINIMAL_DATA            0x53
+ IL_QPVT                    0x56
+ IL_OPVT2A                  0x57
+ IL_OPVT2AHR                0x58
+ IL_OPVT2AW                 0x59
+ IL_OPVTAD                  0x61
+ MRU_OPVTHSSHR              0x64
  IL_OPVT_RAWIMU_DATA        0x66
  IL_OPVT_GNSSEXT_DATA       0x67
- IL_USER_DEFINED_DATA       0x67
+ IL_USER_DEFINED_DATA       0x95
 
 ```
 
 **Published Topics - feel free to modify using fields from IL::INSDataStruct**
 
 `/Inertial_Labs/sensor_data` (`ins_ros/sensor_data`)
- 
-Publish Gyro(x,y,z) , Accelation(x,y,z) , Magnetic (x,y,z) , Temprature , Input Voltage , Pressure , Barometric height .
+
+Publish Gyro(x,y,z) , Accelation(x,y,z) , Magnetic (x,y,z) , Temprature , Input Voltage , Pressure , Barometric height.
 
 `/Inertial_Labs/ins_data` (`ins_ros/ins_data`)
- 
-Publish GPS INS Time, Latitude, Longitude, Altitude, Heading , Pitch , Roll, East Velocity, North Velocity, Up Velocity values .
+
+Publish GPS INS Time, GPS IMU Time, Millisecond of the week, Latitude, Longitude, Altitude, Heading , Pitch , Roll, Orientation quaternion, East Velocity, North Velocity, Up Velocity values, Solution status, Position STD, Heading STD, Unit Status.
 
 `/Inertial_Labs/gps_data` (`ins_ros/gps_data`)
 
-Publish Latitude, Longitude , Altitude , Ground Speed , Track Direction,  Vertial Speed values .
+Publish Latitude, Longitude , Altitude , Ground Speed , Track Direction,  Vertical Speed values .
 
  `/Inertial_Labs/gnss_data` (`ins_ros/gnss_data`)
-  
-Publish  GNSS service Info 1, Info 2, Satellites Used, Velocity Latency, Heading status, Heading, Pitch, GDOP, PDOP, HDOP, VDOP, TDOP. 
+
+Publish  GNSS service Info 1, Info 2, Satellites Used, Velocity Latency, Heading status, Heading, Pitch, GDOP, PDOP, HDOP, VDOP, TDOP, New GNSS Flag, Age of differenctiol correction.
+
+ `/Inertial_Labs/marine_data` (`ins_ros/marine_data`)
+
+Publish  Heave, Surge, Sway, Heave Velocity, Surge Velocity, Sway Velocity, Significant Wave Height.
+
 
 ## FAQ
 
