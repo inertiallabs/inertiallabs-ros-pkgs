@@ -1,11 +1,18 @@
 #pragma once
 #include "Transport.h"
 
+struct sockaddr_in;
+
 namespace IL {
     class NetClient :
         public Transport
     {
     public:
+        enum Type {
+            None,
+            Tcp,
+            Udp,
+        };
         NetClient();
         virtual ~NetClient();
         virtual int open(const char* url);
@@ -18,6 +25,8 @@ namespace IL {
         int fd;
         int64_t hCom;
         int timeout;
+        Type type;
+        sockaddr_in *addr;
     };
 }
 
