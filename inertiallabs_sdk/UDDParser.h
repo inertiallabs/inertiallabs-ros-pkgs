@@ -49,6 +49,7 @@ namespace IL {
 		int8_t i8val;
 		uint8_t ui8val;
 		bool parseError;
+		bool high_precision_heave;
 		INSDataStruct outData;
 
 		template<typename T>

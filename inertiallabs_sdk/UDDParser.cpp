@@ -12,10 +12,11 @@ namespace IL {
 		: KA(2000)
 		, KG(50)
 		, code(0)
-		, payloadInd(0)
 		, payloadLen(0)
+		, payloadInd(0)
 		, dataSet("")
 		, oldDataSet("")
+		, high_precision_heave(false)
 	{
 	}
 
@@ -59,7 +60,17 @@ namespace IL {
 			break;
 		case INS_OPVT2AHR:
 			statusStream << "OPVT2AHR";
-			dataSet = "\x07\x21\x23\x24\x53\x50\x52\x11\x12\x31\x32\x01\x36\x3B\x3D\x3A\xF2\xF1\xF7\x25\x41";
+			dataSet = "\x07\x21\x23\x24\x53\x50\x52\x11\x12\x31\x32\x01\x36\x3B"
+					  "\x3D\x3A\xF2\xF1\xF7\x25\x41";
+			break;
+		case MRU_OPVTHSSHR:
+			statusStream << "OPVTHSSHR";
+			dataSet = "\x08\x21\x23\x24\x53\x50\x52\x11\x12\x13\x16\x15\x18\x31"
+					  "\x32\x01\x3c\x36\x3B\x3D\x3A\xF2\xF1\xF7\x25\x41";
+			if (high_precision_heave) {
+				dataSet[9] = '\x14';
+				dataSet[10] = '\x17';
+			}
 			break;
 		case INS_OPVT2AW:
 			statusStream << "OPVT2AW";
@@ -129,6 +140,23 @@ namespace IL {
 				break;
 			case 0x12:
 				hdrStream << "V_East\tV_North\tV_Up";
+				break;
+			case 0x13:
+			case 0x14:
+				hdrStream << "Heave";
+				break;
+			case 0x15:
+				hdrStream << "Heave_Velocity";
+				break;
+			case 0x16:
+			case 0x17:
+				hdrStream << "Surve\tSway";
+				break;
+			case 0x18:
+				hdrStream << "Surve_Velocity\tSway_Velocity";
+				break;
+			case 0x19:
+				hdrStream << "Significant_Wave_Height";
 				break;
 			case 0x1B:
 				hdrStream << "V_East\tV_North\tV_Up";
@@ -381,6 +409,30 @@ namespace IL {
 			case 0x12:
 				for (int ind = 0; ind < 3; ++ind)
 					outData.VelENU[ind] = readScaled<int32_t>(SV, ind < 2);
+				break;
+			case 0x13:
+				outData.Heave = readScaled<int32_t>(100.0, false);
+				break;
+			case 0x14:
+				outData.Heave = readScaled<int32_t>(10000.0, false);
+				break;
+			case 0x15:
+				outData.Heave_velocity = readScaled<int16_t>(100.0,false);
+				break;
+			case 0x16:
+				outData.Surge = readScaled<int16_t>(100.0, true);
+				outData.Sway = readScaled<int16_t>(100.0, false);
+				break;
+			case 0x17:
+				outData.Surge = readScaled<int16_t>(1000.0, true);
+				outData.Sway = readScaled<int16_t>(1000.0, false);
+				break;
+			case 0x18:
+				outData.Surge_velocity = readScaled<int16_t>(100.0,true);
+				outData.Sway_velocity = readScaled<int16_t>(100.0,false);
+				break;
+			case 0x19:
+				outData.significant_wave_height = readScaled<uint16_t>(100.0, false);
 				break;
 			case 0x1B:
 				for (int ind = 0; ind < 3; ++ind)

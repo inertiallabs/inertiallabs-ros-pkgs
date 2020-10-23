@@ -15,11 +15,11 @@ namespace IL {
 		const uint8_t INS_OPVT2AHR = 0x58;
 		const uint8_t INS_OPVT2AW = 0x59;
 		const uint8_t INS_OPVTAD = 0x61;
+		const uint8_t MRU_OPVTHSSHR = 0x64;
 		const uint8_t INS_OPVT_rawIMU = 0x66;
 		const uint8_t INS_OPVT_GNSSext = 0x67;
 		const uint8_t SPAN_rawIMU = 0x68;
 		const uint8_t INS_UDD = 0x95;
-
 	}
 
 	struct INSDataStruct
@@ -82,6 +82,14 @@ namespace IL {
 		int LatencyECEF;
 		int PPPStore, PPPApp;
 		uint64_t dataPresent[8];
+
+		double Heave;
+		double Surge;
+		double Sway;
+		double Heave_velocity;
+		double Surge_velocity;
+		double Sway_velocity;
+		double significant_wave_height;
 	};
 
 
