@@ -17,7 +17,7 @@ namespace IL {
 		, quit(false)
 		, devInfoRead(false)
 		, onRequestMode(false)
-		, sessionState(0)
+		, sessionState(Off)
 		, callback(nullptr)
 	{
 		port = nullptr;
@@ -56,10 +56,10 @@ namespace IL {
 			disconnect();
 			return result;
 		}
-		sessionState = 0;
+		sessionState = Off;
 		workerThread = new std::thread(threadFunc, this);
 		readDevInfo();
-		if (sessionState < 2)
+		if (sessionState < GotDevParams)
 		{
 			disconnect();
 			return 512;
@@ -87,26 +87,30 @@ namespace IL {
 	int Driver::start(unsigned char mode, bool onRequest, const char* logname)
 	{
 		char command = onRequest ? '\xC1' : mode;
-		if (sessionState != 2)
+		if (sessionState != GotDevParams) {
 			return 1;
+		}
+
 		onRequestMode = onRequest;
 		sendPacket(0, &command, 1);
 		for (int repeat = 0; repeat < 10; ++repeat) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(100));
-			if (sessionState >= 3)
+			if (sessionState >= GetIntinialReport) {
 				break;
+            }
 		}
-		if (sessionState < 3) {
+		if (sessionState < GetIntinialReport) {
 			return 2;
 		}
-		if (sessionState < 4) {
+		if (sessionState < Processing) {
 			std::this_thread::sleep_for(std::chrono::seconds(deviceParam.initAlignmentTime));
 			for (int repeat = 0; repeat < 10; ++repeat) {
-				if (sessionState == 4)
+				if (sessionState == Processing) {
 					break;
+				}
 				std::this_thread::sleep_for(std::chrono::milliseconds(100));
 			}
-			if (sessionState < 4) {
+			if (sessionState < Processing) {
 				return 3;
 			}
 		}
@@ -119,7 +123,7 @@ namespace IL {
 	{
 		if (!onRequestMode)
 			return -1;
-		if (sessionState < 3)
+		if (sessionState < GetIntinialReport)
 			return -2;
 		requestFulfilled = false;
 		requestCode = mode;
@@ -135,7 +139,7 @@ namespace IL {
 
 	int Driver::stop()
 	{
-		sessionState = 5;
+		sessionState = Closing;
 		for (int trial = 0; trial < 5; ++trial)
 		{
 			sendPacket(0, "\xFE", 1);
@@ -145,10 +149,10 @@ namespace IL {
 		if (log) {
 			log.close();
 		}
-		sessionState = 0;
+		sessionState = Off;
 		if (!devInfoRead)					// In case the device was in auto-start mode or already started when we connected
 			return readDevInfo();
-		sessionState = 2;
+		sessionState = GotDevParams;
 		return 0;
 	}
 
@@ -183,7 +187,7 @@ namespace IL {
 
 	int Driver::readDevInfo()
 	{
-		int result = sendPacket(0, "\x12", 1);
+		int result = sendPacket(0, "\x12", 1);(void) result;
 		for (int sec = 0; sec < 30; ++sec) {
 			std::this_thread::sleep_for(std::chrono::seconds(1));
 			if (sessionState)
@@ -197,7 +201,7 @@ namespace IL {
 		sendPacket(0, "\x41", 1);
 		for (int sec = 0; sec < 10; ++sec) {
 			std::this_thread::sleep_for(std::chrono::seconds(1));
-			if (2 == sessionState || 4 == sessionState)
+			if (GotDevParams == sessionState || Processing == sessionState)
 				break;
 		}
 		return 0;
@@ -205,6 +209,14 @@ namespace IL {
 
 	void Driver::readerLoop()
 	{
+		enum TrafficType
+		{
+			Invalid,
+			Binary,
+			RawImu,
+			Nmea,
+			Nmea_A,
+		};
 		int state = 0;
 		int checksum = 0;
 		char buf[65536];
@@ -214,7 +226,7 @@ namespace IL {
 		std::string RawIMU;
 		uint32_t RawIMUcounter;
 		uint8_t header[3];
-		int trafficType = -1;
+		TrafficType trafficType = Invalid;
 		uint8_t byte = 0, prevByte = 0;
 		while (!quit)
 		{
@@ -237,58 +249,60 @@ namespace IL {
 						if (0xAA == header[0] && 0x55 == header[1] && 0x01 == header[2])
 						{
 							state = 3;
-							trafficType = 0;
+							trafficType = Binary;
 							checksum = 1;
 						}
 						else if (0xAA == header[0] && 0x44 == header[1] && 0x12 == header[2])
 						{
 							state = 3;
-							trafficType = 1;
+							trafficType = RawImu;
 						}
 						else if (0x0D == header[0] && 0x0A == header[1] && '$' == header[2])
 						{
 							state = 3;
-							trafficType = 2;
+							trafficType = Nmea;
 						}
 						else if (0x0D == header[0] && 0x0A == header[1] && 'A' == header[2])
 						{
 							state = 3;
-							trafficType = 3;
+							trafficType = Nmea_A;
 						}
 						break;
 					case 3:
 						switch (trafficType)
 						{
-						case 0:
+						case Binary:
 							parser.code = byte;
 							++state;
 							break;
-						case 1:
+						case RawImu:
 							RawIMU = "\xAA\x44\x12";
 							RawIMU += (char)byte;
 							RawIMUcounter = 4;
 							++state;
 							break;
-						case 2:
+						case Nmea:
 							NMEA = "$";
 							NMEA += (char)byte;
 							++state;
 							break;
-						case 3:
+						case Nmea_A:
 							NMEA = "A";
 							NMEA += (char)byte;
 							++state;
+							break;
+						default:
 							break;
 						}
 						break;
 					case 4:
 						switch (trafficType)
 						{
-						case 0:
+						case Binary:
 							parser.payloadLen = byte;
 							++state;
 							break;
-						case 1:
+						case RawImu:
 							if (72 == ++RawIMUcounter)
 							{
 								state = 0;
@@ -297,7 +311,7 @@ namespace IL {
 								}
 							}
 							break;
-						case 2:
+						case Nmea:
 							if (0x0a == byte && 0x0d == prevByte)
 							{
 								header[1] = prevByte; header[2] = byte;
@@ -307,7 +321,7 @@ namespace IL {
 								}
 							}
 							break;
-						case 3:
+						case Nmea_A:
 							if (0x0a == byte && 0x0d == prevByte)
 							{
 								header[1] = prevByte; header[2] = byte;
@@ -316,6 +330,8 @@ namespace IL {
 									// We do not parse COBHAM
 								}
 							}
+							break;
+						default:
 							break;
 						}
 						break;
@@ -352,31 +368,33 @@ namespace IL {
 							case 0x12:
 								if (parser.payloadLen == sizeof(INSDeviceInfo))
 								{
-									sessionState = 1;
+									sessionState = GotDevInfo;
 									deviceInfo = *reinterpret_cast<INSDeviceInfo*>(parser.payloadBuf);
 								}
 								break;
 							case 0x41:
 								if (parser.payloadLen == sizeof(INSDevicePar))
 								{
-									sessionState = 2;
+									sessionState = GotDevParams;
 									devInfoRead = true;
 									deviceParam = *reinterpret_cast<INSDevicePar*>(parser.payloadBuf);
 								}
 								break;
 							default:
-								if ((!sessionState || 3 == sessionState) && (0x32 == parser.payloadLen || 0x80 == parser.payloadLen))
+								if ((!sessionState || GetIntinialReport == sessionState) && (0x32 == parser.payloadLen || 0x80 == parser.payloadLen))
 								{
-									// Initial alignment report	
-									sessionState = 4;
+									// Initial alignment report
+									sessionState = Processing;
 								}
-								else if (!sessionState || 2 == sessionState || 4 == sessionState)
+								else if (!sessionState ||
+										 GotDevParams == sessionState ||
+										 GetIntinialReport == sessionState || // Ignore missing initial alignment report
+										 Processing == sessionState)
 								{
-									if (parser.parse())
-										sessionState = 3;	// ACK received
-									else
-									{
-										sessionState = 4;
+									if (parser.parse()) {
+										sessionState = GetIntinialReport;	// ACK received
+									} else {
+										sessionState = Processing;
 										if (log) {
 											if (parser.hdrStream.str().size()) {
 												log << parser.hdrStream.str() << std::endl;
@@ -391,6 +409,7 @@ namespace IL {
 								}
 							}
 						}
+					/* fall through */
 					default:
 						state = 0;
 					}
@@ -398,5 +417,4 @@ namespace IL {
 			}
 		}
 	}
-
 }

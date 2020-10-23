@@ -8,6 +8,17 @@ namespace IL {
 	class Driver
 	{
 	public:
+
+        enum SessionState
+        {
+            Off,
+            GotDevInfo,
+            GotDevParams,
+            GetIntinialReport,
+            Processing,
+            Closing
+        };
+
 		Driver();
 		~Driver();
 		int connect(const char* url);
@@ -17,7 +28,7 @@ namespace IL {
 		int stop();
 		INSDeviceInfo getDeviceInfo();
 		INSDevicePar getDeviceParams();
-		bool isStarted() { return sessionState == 4; }
+		bool isStarted() { return sessionState == Processing; }
 		void setCallback(void (*newCallback)(INSDataStruct*, void*), void* userContext);
 
 	private:
@@ -31,7 +42,7 @@ namespace IL {
 		bool onRequestMode;
 		char requestCode;
 		bool requestFulfilled;
-		int sessionState;
+		SessionState sessionState;
 		int sendPacket(char type, const char* payload, unsigned int size);
 		int readDevInfo();
 		void readerLoop();
