@@ -378,6 +378,16 @@ namespace IL {
 									sessionState = GotDevParams;
 									devInfoRead = true;
 									deviceParam = *reinterpret_cast<INSDevicePar*>(parser.payloadBuf);
+									sendPacket(0, "\xB1\x6C", 2);
+								}
+								break;
+							case 0xB1:
+								if (parser.payloadLen == 2)
+								{
+									if (parser.payloadBuf[0] == 0x6C)
+									{
+										parser.high_precision_heave = (parser.payloadBuf[1] == 0x01);
+									}
 								}
 								break;
 							default:
