@@ -606,9 +606,9 @@ namespace IL {
 				outData.KFAltStd = readScaled<uint16_t>(1000, false);
 				break;
 			case 0x58:
-				outData.KFVelStd[0] = readScaled<uint16_t>(1000, true);
-				outData.KFVelStd[1] = readScaled<uint16_t>(1000, true);
-				outData.KFVelStd[2] = readScaled<uint16_t>(1000, false);
+				outData.KFVelStd[0] = readScaled<uint8_t>(1000, true);
+				outData.KFVelStd[1] = readScaled<uint8_t>(1000, true);
+				outData.KFVelStd[2] = readScaled<uint8_t>(1000, false);
 				break;
 			case 0x60:
 				outData.Odometer = readScaled<int32_t>(1000, false);
