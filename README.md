@@ -46,7 +46,7 @@ example rosnodes
 
 for ins OPVT2AHR packet via USB serial port
 ```
- rosrun inertiallabs_ins il_ins url:=serial:/dev/ttyUSB0:460800 _ins_output_format:=0x58
+ rosrun inertiallabs_ins il_ins _ins_url:=serial:/dev/ttyUSB0:460800 _ins_output_format:=0x58
 
 ```
 for ins OPVT packet via UDP (INS hostname is used)
@@ -65,7 +65,7 @@ for ins OPVT packet via UDP (INS IP address is used)
 
 **Parameters**
 
-`url` (`string`, `default: serial:/dev/ttyUSB0:115200`)
+`ins_url` (`string`, `default: serial:/dev/ttyUSB0:460800`)
 
 Port the device is connected to. Can be serial:[path to device]:[baudrate], tcp:[hostname or address]:[tcp server port], or udp:[hostname or address]:[udp server port]. Inertial Labs Driver supports serial connection
 
