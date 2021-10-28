@@ -13,3 +13,6 @@ float32                  GNSS_VDOP
 float32                  GNSS_TDOP
 uint8                    New_GNSS_Flags
 float64                  Diff_Age
+geometry_msgs/Vector3    Pos_STD
+float32                  Heading_STD
+float32                  Pitch_STD

@@ -78,7 +78,11 @@ void publish_device(IL::INSDataStruct *data, void* contextPtr)
 		msg_ins_data.GPS_IMU_Time = data->GPS_IMU_Time;
 		msg_ins_data.GPS_mSOW.data = data->ms_gps;
 		msg_ins_data.Solution_Status.data = data->INSSolStatus;
-        msg_ins_data.USW = data->USW;
+		msg_ins_data.USW = data->USW;
+		msg_ins_data.Pos_STD.x = data->KFLatStd;
+		msg_ins_data.Pos_STD.y = data->KFLonStd;
+		msg_ins_data.Pos_STD.z = data->KFAltStd;
+		msg_ins_data.Heading_STD = data->KFHdgStd;
 		context->publishers[1].publish(msg_ins_data);
 	}
 
@@ -115,6 +119,11 @@ void publish_device(IL::INSDataStruct *data, void* contextPtr)
 		msg_gnss_data.GNSS_TDOP = data->TDOP;
 		msg_gnss_data.New_GNSS_Flags = data->NewGPS;
 		msg_gnss_data.Diff_Age = data->DiffAge;
+		msg_gnss_data.Pos_STD.x = data->LatGNSSStd;
+		msg_gnss_data.Pos_STD.y = data->LonGNSSStd;
+		msg_gnss_data.Pos_STD.z = data->AltGNSSStd;
+		msg_gnss_data.Heading_STD = data->HeadingGNSSStd;
+		msg_gnss_data.Pitch_STD = data->PitchGNSSStd;
 		context->publishers[3].publish(msg_gnss_data);
 	}
 

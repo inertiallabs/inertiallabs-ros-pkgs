@@ -105,7 +105,7 @@ Publish Latitude, Longitude , Altitude , Ground Speed , Track Direction,  Vertic
 
  `/Inertial_Labs/gnss_data` (`ins_ros/gnss_data`)
 
-Publish  GNSS service Info 1, Info 2, Satellites Used, Velocity Latency, Heading status, Heading, Pitch, GDOP, PDOP, HDOP, VDOP, TDOP, New GNSS Flag, Age of differenctiol correction.
+Publish  GNSS service Info 1, Info 2, Satellites Used, Velocity Latency, Heading status, Heading, Pitch, GDOP, PDOP, HDOP, VDOP, TDOP, New GNSS Flag, Age of differenctiol correction, Position STD, Heading STD, Pitch STD.
 
  `/Inertial_Labs/marine_data` (`ins_ros/marine_data`)
 
