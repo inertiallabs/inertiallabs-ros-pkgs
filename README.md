@@ -46,18 +46,18 @@ example rosnodes
 
 for ins OPVT2AHR packet via USB serial port
 ```
- rosrun inertiallabs_ins il_ins _ins_url:=serial:/dev/ttyUSB0:460800 _ins_output_format:=0x58
+ rosrun inertiallabs_ins il_ins _ins_url:=serial:/dev/ttyUSB0:460800 _ins_output_format:=88
 
 ```
 for ins OPVT packet via UDP (INS hostname is used)
 ```
- rosrun inertiallabs_ins il_ins _ins_url:=udp:INS-F2001234:23 _ins_output_format:=0x52
+ rosrun inertiallabs_ins il_ins _ins_url:=udp:INS-F2001234:23 _ins_output_format:=82
 
 ```
 
 for ins OPVT packet via UDP (INS IP address is used)
 ```
- rosrun inertiallabs_ins il_ins _ins_url:=udp:192.168.0.249:23 _ins_output_format:=0x52
+ rosrun inertiallabs_ins il_ins _ins_url:=udp:192.168.0.249:23 _ins_output_format:=82
 
 ```
 
@@ -74,18 +74,18 @@ Port the device is connected to. Can be serial:[path to device]:[baudrate], tcp:
 The output data format of the INS data according to IL INS ICD.
 
 ```
- IL_SENSOR_DATA             0x50
- IL_OPVT                    0x52
- IL_MINIMAL_DATA            0x53
- IL_QPVT                    0x56
- IL_OPVT2A                  0x57
- IL_OPVT2AHR                0x58
- IL_OPVT2AW                 0x59
- IL_OPVTAD                  0x61
- MRU_OPVTHSSHR              0x64
- IL_OPVT_RAWIMU_DATA        0x66
- IL_OPVT_GNSSEXT_DATA       0x67
- IL_USER_DEFINED_DATA       0x95
+ IL_SENSOR_DATA             80  (0x50)
+ IL_OPVT                    82  (0x52)
+ IL_MINIMAL_DATA            83  (0x53)
+ IL_QPVT                    86  (0x56)
+ IL_OPVT2A                  87  (0x57)
+ IL_OPVT2AHR                88  (0x58)
+ IL_OPVT2AW                 89  (0x59)
+ IL_OPVTAD                  97  (0x61)
+ MRU_OPVTHSSHR              100 (0x64)
+ IL_OPVT_RAWIMU_DATA        102 (0x66)
+ IL_OPVT_GNSSEXT_DATA       103 (0x67)
+ IL_USER_DEFINED_DATA       149 (0x95)
 
 ```
 
