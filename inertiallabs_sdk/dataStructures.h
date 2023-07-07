@@ -4,6 +4,7 @@
 namespace IL {
 
 	namespace PacketType {
+		const uint8_t IL_IMU_Orientation = 0x33;
 		const uint8_t Cobham_UAV200_Satcom = 0x46;
 		const uint8_t IL_Sensors = 0x50;
 		const uint8_t IL_OPVT = 0x52;

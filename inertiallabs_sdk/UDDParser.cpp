@@ -9,13 +9,12 @@ using namespace std;
 namespace IL {
 
 	UDDParser::UDDParser()
-		: KA(2000)
-		, KG(50)
+		: KA(4000)
+		, KG(10)
 		, code(0)
 		, payloadLen(0)
 		, payloadInd(0)
 		, dataSet("")
-		, oldDataSet("")
 		, high_precision_heave(false)
 	{
 	}
@@ -38,6 +37,10 @@ namespace IL {
 		switch (code)
 		{
 			using namespace PacketType;
+		case IL_IMU_Orientation:
+			statusStream << "IMU Orientation";
+			dataSet = "\x07\x20\x22\x24\xFF\xFF\x53\x50\x52";
+			break;
 		case IL_Sensors:
 			statusStream << "Sensors";
 			dataSet = "\x07\x20\x22\x24\xFF\xFF\x53\x50\x52\x30\x34\x32\x01\xF3\xF0\xF4\x41\xFE";
@@ -100,11 +103,7 @@ namespace IL {
 			statusStream << "0x" << hex << setw(2) << setfill('0') << static_cast<uint32_t>(code);
 			break;
 		}
-		//	if (dataSet != oldDataSet)
-		{
-			writeHeader();
-			oldDataSet = dataSet;
-		}
+		writeHeader();
 		writeTxtAndData();
 		return 0;
 	}
@@ -347,6 +346,8 @@ namespace IL {
 			}
 			if (i < dataSet.size() - 1)
 				hdrStream << "\t";
+			else 
+				hdrStream << "\n";
 		}
 	}
 
@@ -356,10 +357,7 @@ namespace IL {
 		bool GPSTimePresent = false;
 		double UTCTOD = 0; 			// UTC Time of Day
 		uint32_t UTCDOW = 0; 		// Day of Week computed from UTC date;
-		int UTCMonth;
-		int UTCYear;
 		static int startOfMonthDaysToAdd[] = { 0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4 }; 	// To compute day of week
-		double val;
 		for (int i = 0; i < dataSet.size(); ++i)
 		{
 			switch (static_cast<uint8_t>(dataSet[i]))

@@ -95,11 +95,11 @@ namespace IL {
 		sendPacket(0, &command, 1);
 		for (int repeat = 0; repeat < 10; ++repeat) {
 			std::this_thread::sleep_for(std::chrono::milliseconds(100));
-			if (sessionState >= GetIntinialReport) {
+			if (sessionState >= GetInitialReport) {
 				break;
             }
 		}
-		if (sessionState < GetIntinialReport) {
+		if (sessionState < GetInitialReport) {
 			return 2;
 		}
 		if (sessionState < Processing) {
@@ -111,7 +111,10 @@ namespace IL {
 				std::this_thread::sleep_for(std::chrono::milliseconds(100));
 			}
 			if (sessionState < Processing) {
-				return 3;
+				if (onRequestMode)						// IMU does not provide IA report
+					sessionState = Processing;
+				else
+					return 3;
 			}
 		}
 		if (logname)
@@ -123,7 +126,7 @@ namespace IL {
 	{
 		if (!onRequestMode)
 			return -1;
-		if (sessionState < GetIntinialReport)
+		if (sessionState < GetInitialReport)
 			return -2;
 		requestFulfilled = false;
 		requestCode = mode;
@@ -228,6 +231,7 @@ namespace IL {
 		uint8_t header[3];
 		TrafficType trafficType = Invalid;
 		uint8_t byte = 0, prevByte = 0;
+		bool headerWritten = false;
 		while (!quit)
 		{
 			int readBytes = port->read(buf, sizeof(buf));
@@ -391,25 +395,26 @@ namespace IL {
 								}
 								break;
 							default:
-								if ((!sessionState || GetIntinialReport == sessionState) && (0x32 == parser.payloadLen || 0x80 == parser.payloadLen))
+								if ((!sessionState || GetInitialReport == sessionState) && (0x32 == parser.payloadLen || 0x80 == parser.payloadLen))
 								{
 									// Initial alignment report
 									sessionState = Processing;
 								}
 								else if (!sessionState ||
 										 GotDevParams == sessionState ||
-										 GetIntinialReport == sessionState || // Ignore missing initial alignment report
+										 GetInitialReport == sessionState || // Ignore missing initial alignment report
 										 Processing == sessionState)
 								{
 									if (parser.parse()) {
-										sessionState = GetIntinialReport;	// ACK received
+										sessionState = GetInitialReport;	// ACK received
 									} else {
 										sessionState = Processing;
-										if (log) {
-											if (parser.hdrStream.str().size()) {
-												log << parser.hdrStream.str() << std::endl;
+										if (log.is_open()) {
+											if (!headerWritten) {
+												log << parser.hdrStream.str();
+												headerWritten = true;
 											}
-											log << parser.txtStream.str() << std::endl;
+											log << parser.txtStream.str();
 										}
 										latestData = parser.outData;
 										if (onRequestMode && parser.code == requestCode)

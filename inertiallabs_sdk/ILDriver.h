@@ -14,7 +14,7 @@ namespace IL {
             Off,
             GotDevInfo,
             GotDevParams,
-            GetIntinialReport,
+            GetInitialReport,
             Processing,
             Closing
         };

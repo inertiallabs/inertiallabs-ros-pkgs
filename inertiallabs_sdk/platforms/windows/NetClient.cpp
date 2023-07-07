@@ -101,7 +101,7 @@ namespace IL {
 			socklen_t slen = sizeof(sockaddr_in);
 			result = ::recvfrom(fd, buf, size, 0, (sockaddr*)addr, &slen);
 		} else {
-			result = ::recv(fd, buf, size);
+			result = ::recv(fd, buf, size, 0);
 		}
 		int err;
 		if (result == SOCKET_ERROR && (err = WSAGetLastError()) != WSAEMSGSIZE)	return -err;
@@ -115,7 +115,7 @@ namespace IL {
 			socklen_t slen = sizeof(sockaddr_in);
 			result = ::sendto(hCom, buf, size, 0 , (struct sockaddr *) addr, slen);
 		} else {
-			result = ::send(hCom, buf, size);
+			result = ::send(hCom, buf, size, 0);
 		}
 		if (result == SOCKET_ERROR)	return -WSAGetLastError();
 		return result;
