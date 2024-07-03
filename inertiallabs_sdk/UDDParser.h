@@ -64,7 +64,7 @@ namespace IL {
 		template<typename T>
 		double readScaled(double scale, bool tab = false, int base = 10)
 		{
-			T val;
+			T val = 0;
 			parseError = (payloadLen - payloadInd < sizeof(val));
 			if (!parseError)
 			{
