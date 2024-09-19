@@ -1,7 +1,7 @@
 #include <WS2tcpip.h>
 #include <string>
 #include <cstring>
-#include "../../NetClient.h"
+#include "NetClient.h"
 
 #pragma comment(lib, "Ws2_32.lib")
 

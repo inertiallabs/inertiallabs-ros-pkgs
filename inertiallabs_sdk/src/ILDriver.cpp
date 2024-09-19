@@ -1,10 +1,12 @@
-#include "ILDriver.h"
-#include "UDDParser.h"
-#include "SerialPort.h"
-#include "NetClient.h"
 #include <iostream>
 #include <string>
-#include <errno.h>
+#include <cerrno>
+
+#include <ilsdk.h>
+
+#include "SerialPort.h"
+#include "NetClient.h"
+#include "UDDParser.h"
 
 namespace IL {
 

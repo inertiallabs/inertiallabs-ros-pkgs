@@ -5,9 +5,9 @@
 #include "Transport.h"
 
 namespace IL {
-    class Driver
-    {
-    public:
+	class ILSDK_API Driver
+	{
+	public:
 
         enum SessionState
         {
