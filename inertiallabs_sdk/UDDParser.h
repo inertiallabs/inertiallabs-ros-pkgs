@@ -53,7 +53,7 @@ namespace IL {
 
         template<typename T>
         void readVal(T& val) {
-            parseError = (payloadLen - payloadInd < sizeof(val));
+            parseError = (payloadLen - payloadInd) < static_cast<int>(sizeof(val));
             if (!parseError)
             {
                 memcpy(&val, &payloadBuf[payloadInd], sizeof(val));
@@ -65,11 +65,10 @@ namespace IL {
         double readScaled(double scale, bool tab = false, int base = 10)
         {
             T val = 0;
-            parseError = (payloadLen - payloadInd < sizeof(val));
+            parseError = (payloadLen - payloadInd) < static_cast<int>(sizeof(val));
             if (!parseError)
             {
                 memcpy(&val, &payloadBuf[payloadInd], sizeof(val));
-                //			val = *reinterpret_cast<T*>(&payloadBuf[payloadInd]);
                 payloadInd += sizeof(val);
             }
             double res = static_cast<double>(val) / scale;

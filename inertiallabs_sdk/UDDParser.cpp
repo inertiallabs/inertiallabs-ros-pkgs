@@ -30,7 +30,7 @@ namespace IL {
         hdrStream.str("");
         statusStream.str("");
         if (payloadLen <= 2)
-            return 1;				// ACK message
+            return 1; // ACK message
         payloadInd = 0;
         statusStream << "INS data: ";
         SA = 1e6; SG = 1e5; SO = 1e3; SV = 1e2;
@@ -110,7 +110,7 @@ namespace IL {
 
     void UDDParser::writeHeader()
     {
-        for (int i = 0; i < dataSet.size(); ++i)
+        for (size_t i = 0; i < dataSet.size(); ++i)
         {
             switch (static_cast<uint8_t>(dataSet[i]))
             {
@@ -353,12 +353,7 @@ namespace IL {
 
     void UDDParser::writeTxtAndData()
     {
-        uint8_t IMRdataPresent = 0;
-        bool GPSTimePresent = false;
-        double UTCTOD = 0; 			// UTC Time of Day
-        uint32_t UTCDOW = 0; 		// Day of Week computed from UTC date;
-        static int startOfMonthDaysToAdd[] = { 0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4 }; 	// To compute day of week
-        for (int i = 0; i < dataSet.size(); ++i)
+        for (size_t i = 0; i < dataSet.size(); ++i)
         {
             switch (static_cast<uint8_t>(dataSet[i]))
             {
@@ -751,7 +746,6 @@ namespace IL {
                 readScaled<uint16_t>(1, false, 16);
                 break;
             default:
-                //			cout << "Unknown data!" << endl;
                 break;
             }
             if (i < dataSet.size() - 1)
