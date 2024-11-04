@@ -28,7 +28,7 @@ int _getch(void)
                 break;
             }
         }
-    }    
+    }
     tcsetattr(STDIN_FILENO, TCSANOW, &oldt);
     return ch;
 }
@@ -37,10 +37,10 @@ int _getch(void)
 void callback(IL::INSDataStruct* data, void* context)
 {
     printf(
-        "%8s: H = %+07.2f, P = %+07.2f, R = %+07.2f, G = [%+07.1f %+07.1f %+07.1f], A = [%+07.4f %+07.4f %+07.4f], USW = %04x, V = %05.2f, T = %+05.1f\r", 
-        reinterpret_cast<std::string*>(context)->c_str(), 
-        data->Heading, 
-        data->Pitch, 
+        "%8s: H = %+07.2f, P = %+07.2f, R = %+07.2f, G = [%+07.1f %+07.1f %+07.1f], A = [%+07.4f %+07.4f %+07.4f], USW = %04x, V = %05.2f, T = %+05.1f\r",
+        reinterpret_cast<std::string*>(context)->c_str(),
+        data->Heading,
+        data->Pitch,
         data->Roll,
         data->Gyro[0], data->Gyro[1], data->Gyro[2],
         data->Acc[0], data->Acc[1], data->Acc[2],

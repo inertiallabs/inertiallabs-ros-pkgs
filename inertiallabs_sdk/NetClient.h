@@ -29,4 +29,3 @@ namespace IL {
         sockaddr_in *addr;
     };
 }
-
