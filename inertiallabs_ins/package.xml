@@ -4,10 +4,10 @@
   <version>1.0.0</version>
   <description>The Inertial Labs INS package</description>
 
-  <maintainer email="omprakashpatro@gmail.com">Omprakash Patra</maintainer>
-  <url type="website">http://exmaple.com</url>
+  <maintainer email="info@inertiallabs.com">Inertial Labs</maintainer>
+  <url type="website">https://inertiallabs.com</url>
 
-  <license>BSD</license>
+  <license>MIT</license>
 
   <buildtool_depend>catkin</buildtool_depend>
 

@@ -6,7 +6,7 @@
     ROS packages for the Inertial Labs (meta package)
   </description>
 
-  <maintainer email="omprakashpatro@gmail.com">Omprakash Patra</maintainer>
+  <maintainer email="info@inertiallabs.com">Inertial Labs</maintainer>
   <url type="website">https://inertiallabs.com</url>
 
   <license>MIT</license>
