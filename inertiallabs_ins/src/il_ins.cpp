@@ -22,10 +22,10 @@ struct Context {
     std::string imu_frame_id;
 };
 
-void publish_device(IL::INSDataStruct *data, void* contextPtr)
+void publishDevice(IL::INSDataStruct* data, void* contextPtr)
 {
-    Context * context = reinterpret_cast<Context*>(contextPtr);
-    static int seq=0;
+    Context* context = reinterpret_cast<Context*>(contextPtr);
+    static int seq = 0;
     seq++;
 
     inertiallabs_msgs::sensor_data msg_sensor_data;
@@ -34,7 +34,7 @@ void publish_device(IL::INSDataStruct *data, void* contextPtr)
     inertiallabs_msgs::gnss_data msg_gnss_data;
     inertiallabs_msgs::marine_data msg_marine_data;
 
-    ros::Time timestamp = ros::Time::now();
+    const ros::Time timestamp = ros::Time::now();
 
     if (context->publishers[0].getNumSubscribers() > 0)
     {
@@ -147,36 +147,33 @@ void publish_device(IL::INSDataStruct *data, void* contextPtr)
 int main(int argc, char** argv)
 {
     ros::init(argc, argv, "il_ins");
-    ros::NodeHandle n;
     ros::NodeHandle np("~");
     ros::Rate r(100); // 100 hz
+
     std::string port;
-    IL::Driver ins;
-    int ins_output_format;
-    std::string imu_frame_id;
+    int insOutputFormat;
+
     Context context;
+    IL::Driver ins;
 
-    //command line varibales
-
+    // Command line parameters
     np.param<std::string>("ins_url", port, "serial:/dev/ttyUSB0:460800");
-    np.param<int>("ins_output_format", ins_output_format, 0x52);
+    np.param<int>("ins_output_format", insOutputFormat, 0x52);
 
-    //Initializing Publishers
+    // Initializing Publishers
     context.publishers[0] = np.advertise<inertiallabs_msgs::sensor_data>("/Inertial_Labs/sensor_data", 1);
     context.publishers[1] = np.advertise<inertiallabs_msgs::ins_data>("/Inertial_Labs/ins_data", 1);
     context.publishers[2] = np.advertise<inertiallabs_msgs::gps_data>("/Inertial_Labs/gps_data", 1);
     context.publishers[3] = np.advertise<inertiallabs_msgs::gnss_data>("/Inertial_Labs/gnss_data", 1);
     context.publishers[4] = np.advertise<inertiallabs_msgs::marine_data>("/Inertial_Labs/marine_data", 1);
 
+    // Communication with the device
+    ROS_INFO("Connecting to INS at URL %s\n", port.c_str());
 
-    ROS_INFO("connecting to INS at URL %s\n",port.c_str());
-
-    auto il_err = ins.connect(port.c_str());
-    if (il_err != 0)
+    int il_err = ins.connect(port.c_str());
+    if (il_err)
     {
-        ROS_FATAL("Could not connect to the INS on this URL %s\n",
-                  port.c_str()
-        );
+        ROS_FATAL("Could not connect to the INS on this URL %s\n", port.c_str());
         exit(EXIT_FAILURE);
     }
 
@@ -184,21 +181,27 @@ int main(int argc, char** argv)
     {
         ins.stop();
     }
-    auto devInfo = ins.getDeviceInfo();
-    auto devParams = ins.getDeviceParams();
-    std::string SN(reinterpret_cast<const char *>(devInfo.IDN), 8);
-    ROS_INFO("Found INS S/N %s\n", SN.c_str());
-    context.imu_frame_id = SN;
-    il_err = ins.start(ins_output_format);
-    if (il_err != 0)
+
+    const IL::INSDeviceInfo devInfo = ins.getDeviceInfo();
+    const IL::INSDevicePar devParams = ins.getDeviceParams();
+
+    const std::string serialNumber(reinterpret_cast<const char *>(devInfo.IDN), 8);
+    ROS_INFO("Found INS S/N %s\n", serialNumber.c_str());
+    context.imu_frame_id = serialNumber;
+
+    il_err = ins.start(insOutputFormat);
+    if (il_err)
     {
         ROS_FATAL("Could not start the INS: %i\n", il_err);
         ins.disconnect();
         exit(EXIT_FAILURE);
     }
-    ins.setCallback(&publish_device, &context);
-    ROS_INFO("publishing at %d Hz\n", devParams.dataRate);
-    ROS_INFO("rostopic echo the topics to see the data");
+
+    ins.setCallback(&publishDevice, &context);
+
+    ROS_INFO("Publishing at %d Hz\n", devParams.dataRate);
+    ROS_INFO("Run \"rostopic list\" to see all topics.\nRun \"rostopic echo <topic-name>\" to see the data from sensor");
+
     ros::spin();
     std::cout << "Stopping INS... " << std::flush;
     ins.stop();
