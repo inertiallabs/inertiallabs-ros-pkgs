@@ -30,9 +30,6 @@ catkin_package(
     dynamic_reconfigure
     actionlib_msgs
     inertiallabs_msgs
-
-    DEPENDS
-    system_lib
 )
 
 include_directories(${Opencv_INCLUDE_DIRS})
