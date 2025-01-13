@@ -18,7 +18,7 @@ Make sure the package is on `ROS_PACKAGE_PATH` after cloning the package to your
 
 ```bash
 cd <your_work_space>/src
-git clone https://us.inertiallabs.com:31443/scm/ins/inertiallabs-ros-pkgs.git
+git clone https://github.com/inertiallabs/inertiallabs-ros-pkgs.git
 cd <your_work_space>
 catkin_make_isolated
 source devel_isolated/setup.bash
